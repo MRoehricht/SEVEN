@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.Rover", "SEVEN.Rover\SEVEN.Rover.csproj", "{BA6908AD-7AF9-4A9D-BC19-EF280B6A059F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA6908AD-7AF9-4A9D-BC19-EF280B6A059F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA6908AD-7AF9-4A9D-BC19-EF280B6A059F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA6908AD-7AF9-4A9D-BC19-EF280B6A059F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA6908AD-7AF9-4A9D-BC19-EF280B6A059F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F25484B-0F7F-4D40-AF16-60960452FD91}
+	EndGlobalSection
+EndGlobal
