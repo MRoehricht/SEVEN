@@ -396,4 +396,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/SEVEN.Arduino/AP_SimpleWebServer/arduino_secrets.h
