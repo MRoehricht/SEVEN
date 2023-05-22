@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.Rover", "SEVEN.Rover\SEVEN.Rover.csproj", "{A2F06749-29E3-45CE-98A4-EB8D45D57389}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEVEN.Rover.Console", "SEVEN.Rover\SEVEN.Rover.Console.csproj", "{A2F06749-29E3-45CE-98A4-EB8D45D57389}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SEVEN.Rover", "SEVEN.Rover", "{15DA66A8-BD0A-4A80-AA9D-4D971E5C1A06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.Rover.Core", "SEVEN.Rover.Core\SEVEN.Rover.Core.csproj", "{4A10C11D-D0F5-4C31-8928-BCDFD6638943}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,17 @@ Global
 		{A2F06749-29E3-45CE-98A4-EB8D45D57389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2F06749-29E3-45CE-98A4-EB8D45D57389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2F06749-29E3-45CE-98A4-EB8D45D57389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A10C11D-D0F5-4C31-8928-BCDFD6638943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A10C11D-D0F5-4C31-8928-BCDFD6638943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A10C11D-D0F5-4C31-8928-BCDFD6638943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A10C11D-D0F5-4C31-8928-BCDFD6638943}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A2F06749-29E3-45CE-98A4-EB8D45D57389} = {15DA66A8-BD0A-4A80-AA9D-4D971E5C1A06}
+		{4A10C11D-D0F5-4C31-8928-BCDFD6638943} = {15DA66A8-BD0A-4A80-AA9D-4D971E5C1A06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F25484B-0F7F-4D40-AF16-60960452FD91}

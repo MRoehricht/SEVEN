@@ -1,18 +1,22 @@
-﻿namespace SEVEN.Rover
+﻿using SEVEN.Rover.Core.Clients;
+using SEVEN.Rover.Core.Constants;
+
+namespace SEVEN.Rover
 {
     internal class Program
     {
         public static List<Option> options;
-        static void Main(string[] args)
+        private static RoverClient _roverClient;
+        static async Task Main(string[] args)
         {
-
+            _roverClient = new RoverClient("http://192.168.178.37/");
 
             // Create options that you want your menu to have
             options = new List<Option>
             {
-                new Option("Thing", () => WriteTemporaryMessage("Hi")),
-                new Option("Another Thing", () =>  WriteTemporaryMessage("How Are You")),
-                new Option("Yet Another Thing", () =>  WriteTemporaryMessage("Today")),
+                new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
+                new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
+                new Option("Headlights Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
                 new Option("Exit", () => Environment.Exit(0)),
             };
 
@@ -62,7 +66,7 @@
         {
             Console.Clear();
             Console.WriteLine(message);
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
             WriteMenu(options, options.First());
         }
 

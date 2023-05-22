@@ -19,6 +19,8 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include "arduino_secrets.h" 
+#include "arduino_commands.h" 
+#include "arduino_statusnames.h"
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
@@ -98,17 +100,15 @@ void loop() {
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
             client.println("HTTP/1.1 200 OK");
-            client.println("Content-type:text/html");
-            client.println();
-
-            // the content of the HTTP response follows the header:
-            //client.print("Click <a href=\"/H\">here</a> turn the LED on<br>");
-            //client.print("Click <a href=\"/L\">here</a> turn the LED off<br>");
+            client.println("Content-Type: application/json");
+            client.println("Access-Control-Allow-Origin: *");
+            client.println("");
+            if(digitalRead(led) == 1) {
+              client.println( "{\"Id\":\"Matze\",SwitchStatuses:[{\"Name\":\"Headlights\", \"Status\":\"true\"}]}");
+            } else {
+              client.println( "{\"Id\":\"Matze\",SwitchStatuses:[{\"Name\":\"Headlights\", \"Status\":\"false\"}]}");
+            }
             
-            client.print("<button onclick=\"location.href='/H'\" type=\"button\">ON</button>");
-            client.print("<br>");
-            client.print("<button onclick=\"location.href='/L'\" type=\"button\">OFF</button>");
-
             // The HTTP response ends with another blank line:
             client.println();
             // break out of the while loop:
@@ -121,13 +121,17 @@ void loop() {
         else if (c != '\r') {    // if you got anything else but a carriage return character,
           currentLine += c;      // add it to the end of the currentLine
         }
-
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H")) {
-          digitalWrite(led, HIGH);               // GET /H turns the LED on
+        // Check to see if the client request was "GET /H" or "GET /L":        
+        if (currentLine.endsWith(COMMAND_HEADLIGHTS_ON)) {
+          digitalWrite(led, HIGH);                
+          Serial.println("COMMAND_HEADLIGHTS_ON");   
         }
-        if (currentLine.endsWith("GET /L")) {
-          digitalWrite(led, LOW);                // GET /L turns the LED off
+        if (currentLine.endsWith(COMMAND_HEADLIGHTS_OFF)) {
+          digitalWrite(led, LOW);           
+          Serial.println("COMMAND_HEADLIGHTS_OFF");     
+        }
+        if (currentLine.endsWith(COMMAND_GET_STATUS)) {
+          
         }
       }
     }
@@ -136,6 +140,8 @@ void loop() {
     Serial.println("client disconnected");
   }
 }
+
+
 
 void printWiFiStatus() {
   // print the SSID of the network you're attached to:
