@@ -27,13 +27,24 @@ namespace SEVEN.Rover.Core.Clients
 
         public async Task<bool> GetHeadlights_Status()
         {
-            var roverStatus = await GetRoverStatus();
-            if (roverStatus != null)
+            await Call(RoverCommands.COMMAND_GET_STATUS);
+            if (RoverStatus != null)
             {
-                return roverStatus.SwitchStatuses.FirstOrDefault(_ => _.Name == RoverStatusNames.STATUS_HEADLIGHTS)?.Status ?? false;
+                return RoverStatus.SwitchStatuses.FirstOrDefault(_ => _.Name == RoverStatusNames.STATUS_HEADLIGHTS)?.Status ?? false;
             }
 
             return false;
+        }
+
+        public async Task<string?> TakeFoto()
+        {
+            await Call(RoverCommands.COMMAND_CAMERA_TAKEFOTO);
+            if (RoverStatus != null)
+            {
+                return RoverStatus.ImageData;
+            }
+
+            return null;
         }
 
         private async Task Call(string command)
@@ -49,23 +60,6 @@ namespace SEVEN.Rover.Core.Clients
                 var jsonString = await response.Content.ReadAsStringAsync();
                 RoverStatus = JsonConvert.DeserializeObject<RoverStatus>(jsonString);
             }
-        }
-
-        private async Task<RoverStatus?> GetRoverStatus()
-        {
-            using var handler = new HttpClientHandler();
-            using var client = new HttpClient(handler);
-
-            client.BaseAddress = new Uri(_baseUri);
-            var response = await client.GetAsync("");
-
-            if (response != null)
-            {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<RoverStatus>(jsonString);
-            }
-
-            return null;
         }
     }
 }

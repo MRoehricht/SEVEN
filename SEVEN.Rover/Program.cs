@@ -1,4 +1,5 @@
-﻿using SEVEN.Rover.Core.Clients;
+﻿using Microsoft.Extensions.Configuration;
+using SEVEN.Rover.Core.Clients;
 using SEVEN.Rover.Core.Constants;
 
 namespace SEVEN.Rover
@@ -9,14 +10,30 @@ namespace SEVEN.Rover
         private static RoverClient _roverClient;
         static async Task Main(string[] args)
         {
-            _roverClient = new RoverClient("http://192.168.178.37/");
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfiguration config = builder.Build();
+            var roverConnection = config["RoverConnection"];
+
+            if (string.IsNullOrWhiteSpace(roverConnection))
+            {
+                Console.WriteLine("RoverConnection ist nicht vergeben!");
+                return;
+            }
+
+            _roverClient = new RoverClient(roverConnection);
 
             // Create options that you want your menu to have
             options = new List<Option>
             {
+                new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
+                new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
                 new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
                 new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
-                new Option("Headlights Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
+                new Option("Take a picture", async() => WriteTemporaryMessage(await _roverClient.TakeFoto())),
+
+
                 new Option("Exit", () => Environment.Exit(0)),
             };
 
