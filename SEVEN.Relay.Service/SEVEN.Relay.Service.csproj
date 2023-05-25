@@ -10,4 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SEVEN.Core\SEVEN.Core.csproj" />
+    <ProjectReference Include="..\SEVEN.Rover.Core\SEVEN.Rover.Core.csproj" />
+  </ItemGroup>
 </Project>

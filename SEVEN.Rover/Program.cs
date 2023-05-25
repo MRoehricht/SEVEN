@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using SEVEN.Core.Models.Configuration;
 using SEVEN.Rover.Core.Clients;
 using SEVEN.Rover.Core.Constants;
 
@@ -6,9 +8,9 @@ namespace SEVEN.Rover
 {
     internal class Program
     {
-        public static List<Option> options;
-        private static RoverClient _roverClient;
-        static async Task Main(string[] args)
+        public static List<Option> _options = new();
+        private static RoverClient? _roverClient;
+        static void Main()
         {
             var builder = new ConfigurationBuilder();
             builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -21,11 +23,14 @@ namespace SEVEN.Rover
                 Console.WriteLine("RoverConnection ist nicht vergeben!");
                 return;
             }
+            RoverConnection connection = new() { RoverUrl = roverConnection };
+            IOptions<RoverConnection> options = Options.Create(connection);
 
-            _roverClient = new RoverClient(roverConnection);
 
-            // Create options that you want your menu to have
-            options = new List<Option>
+            _roverClient = new RoverClient(options);
+
+            // Create _options that you want your menu to have
+            _options = new List<Option>
             {
                 new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
                 new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
@@ -41,7 +46,7 @@ namespace SEVEN.Rover
             int index = 0;
 
             // Write the menu out
-            WriteMenu(options, options[index]);
+            WriteMenu(_options, _options[index]);
 
             // Store key info in here
             ConsoleKeyInfo keyinfo;
@@ -52,10 +57,10 @@ namespace SEVEN.Rover
                 // Handle each key input (down arrow will write the menu again with a different selected item)
                 if (keyinfo.Key == ConsoleKey.DownArrow)
                 {
-                    if (index + 1 < options.Count)
+                    if (index + 1 < _options.Count)
                     {
                         index++;
-                        WriteMenu(options, options[index]);
+                        WriteMenu(_options, _options[index]);
                     }
                 }
                 if (keyinfo.Key == ConsoleKey.UpArrow)
@@ -63,13 +68,13 @@ namespace SEVEN.Rover
                     if (index - 1 >= 0)
                     {
                         index--;
-                        WriteMenu(options, options[index]);
+                        WriteMenu(_options, _options[index]);
                     }
                 }
                 // Handle different action for the option
                 if (keyinfo.Key == ConsoleKey.Enter)
                 {
-                    options[index].Selected.Invoke();
+                    _options[index].Selected.Invoke();
                     index = 0;
                 }
             }
@@ -78,22 +83,22 @@ namespace SEVEN.Rover
             Console.ReadKey();
 
         }
-        // Default action of all the options. You can create more methods
-        static void WriteTemporaryMessage(string message)
+        // Default action of all the _options. You can create more methods
+        static void WriteTemporaryMessage(string? message)
         {
             Console.Clear();
             Console.WriteLine(message);
             Thread.Sleep(2000);
-            WriteMenu(options, options.First());
+            WriteMenu(_options, _options.First());
         }
 
 
 
-        static void WriteMenu(List<Option> options, Option selectedOption)
+        static void WriteMenu(List<Option> _options, Option selectedOption)
         {
             Console.Clear();
             DrawHeader();
-            foreach (Option option in options)
+            foreach (Option option in _options)
             {
                 if (option == selectedOption)
                 {

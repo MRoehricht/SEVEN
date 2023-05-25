@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using SEVEN.MissionControl.Client.Data;
+using SEVEN.Core.Client.Data;
 
-namespace SEVEN.MissionControl.Client
+namespace SEVEN.Core.Client
 {
     public class Program
     {

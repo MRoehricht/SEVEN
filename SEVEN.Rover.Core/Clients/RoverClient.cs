@@ -1,18 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using SEVEN.Core.Models.Configuration;
 using SEVEN.Rover.Core.Constants;
 using SEVEN.Rover.Core.Models;
 
 namespace SEVEN.Rover.Core.Clients
 {
-    public class RoverClient
+    public class RoverClient : IRoverClient
     {
         private readonly string _baseUri;
-
         public RoverStatus? RoverStatus { get; private set; }
-
-        public RoverClient(string baseUri)
+        public RoverClient(IOptions<RoverConnection> options)
         {
-            _baseUri = baseUri;
+            if (options.Value.RoverUrl == null)
+            {
+                throw new ArgumentException(nameof(options.Value.RoverUrl));
+            }
+
+            _baseUri = options.Value.RoverUrl;
         }
 
         public async Task TurnHeadlights_On()
