@@ -13,10 +13,11 @@ namespace SEVEN.MissionControl.API.DataLayer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<RoverTask>()
-                .HasOne(r => r.Rover)
-                .WithMany(b => b.Tasks)
-                .HasForeignKey(p => p.RoverId);
+            modelBuilder.Entity<Rover>()
+            .HasMany(e => e.Tasks)
+            .WithOne(e => e.Rover)
+            .HasForeignKey(e => e.RoverId)
+            .IsRequired();
         }
     }
 }

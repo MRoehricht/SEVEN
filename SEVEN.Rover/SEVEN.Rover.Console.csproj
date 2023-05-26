@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SEVEN.MissionControl.API.Client\SEVEN.MissionControl.API.Client.csproj" />
     <ProjectReference Include="..\SEVEN.Rover.Core\SEVEN.Rover.Core.csproj" />
   </ItemGroup>
 

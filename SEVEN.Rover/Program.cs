@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using SEVEN.Core.API.Client;
+using SEVEN.Core.Models;
 using SEVEN.Core.Models.Configuration;
 using SEVEN.Rover.Core.Clients;
-using SEVEN.Rover.Core.Constants;
 
 namespace SEVEN.Rover
 {
@@ -10,7 +11,7 @@ namespace SEVEN.Rover
     {
         public static List<Option> _options = new();
         private static RoverClient? _roverClient;
-        static void Main()
+        static async Task Main()
         {
             var builder = new ConfigurationBuilder();
             builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -24,20 +25,29 @@ namespace SEVEN.Rover
                 return;
             }
             RoverConnection connection = new() { RoverUrl = roverConnection };
-            IOptions<RoverConnection> options = Options.Create(connection);
+            IOptions<RoverConnection> roverOptions = Options.Create(connection);
+
+            APIConnection apiConnection = new() { BaseUrl = "https://localhost:7272/" };
+            IOptions<APIConnection> apiOptions = Options.Create(apiConnection);
 
 
-            _roverClient = new RoverClient(options);
+            var apiClient = new APIClient(apiOptions);
+
+
+            _roverClient = new RoverClient(roverOptions);
 
             // Create _options that you want your menu to have
             _options = new List<Option>
             {
-                new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
-                new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
-                new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
-                new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
-                new Option("Take a picture", async() => WriteTemporaryMessage(await _roverClient.TakeFoto())),
-
+                //new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
+                //new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
+                //new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
+                //new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
+                //new Option("Take a picture", async() => WriteTemporaryMessage(await _roverClient.TakeFoto())),
+                new Option("Load Rover from API", async() => WriteRoverMessage(await apiClient.GetRover(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
+                new Option("Load all ready RoverTask from API", async() => WriteIEnumerableRoverTask(await apiClient.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
+                new Option("CreateTask from API", async() => await CreateTask(apiClient)),
+                new Option("UpdateTaskfrom API", async() => await UpdateTask(apiClient)),
 
                 new Option("Exit", () => Environment.Exit(0)),
             };
@@ -92,6 +102,56 @@ namespace SEVEN.Rover
             WriteMenu(_options, _options.First());
         }
 
+        static void WriteRoverMessage(SEVEN.Core.Models.Rover? rover)
+        {
+            Console.Clear();
+
+            if (rover == null)
+            {
+                Console.WriteLine("Kein Rover da!");
+                Thread.Sleep(2000);
+                return;
+            }
+
+            Console.WriteLine(rover.Id);
+            Console.WriteLine(rover.Name);
+            foreach (var task in rover.Tasks)
+            {
+                Console.WriteLine(task.Id);
+                Console.WriteLine(task.Position);
+                Console.WriteLine(task.Command);
+                Console.WriteLine();
+            }
+            Thread.Sleep(2000);
+            WriteMenu(_options, _options.First());
+        }
+
+        static void WriteIEnumerableRoverTask(IEnumerable<RoverTask> roverTasks)
+        {
+            Console.Clear();
+            foreach (var task in roverTasks)
+            {
+                Console.WriteLine(task.Id);
+                Console.WriteLine(task.Position);
+                Console.WriteLine(task.Command);
+                Console.WriteLine();
+            }
+            Thread.Sleep(2000);
+            WriteMenu(_options, _options.First());
+        }
+
+        static async Task CreateTask(APIClient client)
+        {
+            await client.CreateRoverTask(new RoverTask() { Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Command = RoverTaskCommands.COMMAND_CAMERA_MOVE_LEFT });
+            WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
+        }
+
+        static async Task UpdateTask(APIClient client)
+        {
+            await client.UpdateRoverTaskStatus(new RoverTask() { Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Status = RoverTaskStatus.Started });
+
+            WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
+        }
 
 
         static void WriteMenu(List<Option> _options, Option selectedOption)
