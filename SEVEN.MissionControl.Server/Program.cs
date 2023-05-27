@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using SEVEN.MissionControl.Server.API.Endpoints;
 using SEVEN.MissionControl.Server.Data;
 using SEVEN.MissionControl.Server.Data.Contexts;
 using SEVEN.MissionControl.Server.Data.Generators;
+using SEVEN.MissionControl.Server.Data.Repositories;
 
 namespace SEVEN.MissionControl.Server
 {
@@ -16,8 +18,10 @@ namespace SEVEN.MissionControl.Server
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddMudServices();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.AddTransient<IRoverTaskRepository, RoverTaskRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

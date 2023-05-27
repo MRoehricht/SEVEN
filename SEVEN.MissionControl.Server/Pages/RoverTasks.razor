@@ -1,0 +1,23 @@
+﻿@page "/rovertasks"
+@using SEVEN.MissionControl.Server.Data.Repositories;
+@inject IRoverTaskRepository repository;
+
+<h3>RoverTasks</h3>
+
+<MudButton OnClick="HeadlightsOn" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Headlights AN</MudButton>
+<MudButton OnClick="HeadlightsOff"  Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Headlights AUS</MudButton>
+
+
+@code {
+
+
+    async Task HeadlightsOn()
+    {
+        await repository.CreateRoverTask(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Core.Models.RoverTaskCommands.COMMAND_HEADLIGHTS_ON);
+    }
+
+    async Task HeadlightsOff()
+    {
+        await repository.CreateRoverTask(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Core.Models.RoverTaskCommands.COMMAND_HEADLIGHTS_OFF);
+    }
+}

@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SEVEN.Core.Models;
-using SEVEN.MissionControl.Server.Data.Contexts;
+﻿using SEVEN.Core.Models;
+using SEVEN.MissionControl.Server.Data.Repositories;
 
 namespace SEVEN.MissionControl.Server.API.Endpoints
 {
@@ -10,52 +9,35 @@ namespace SEVEN.MissionControl.Server.API.Endpoints
         {
 
             group.MapGet("/{id}", GetRoverTask).WithName("GetRovertask").WithOpenApi();
-            group.MapGet("/ready/{id}", GetReadyRoverTask).WithName("GetRovertaskToStart").WithOpenApi();
+            group.MapGet("/ready/{id}", GetReadyRoverTasks).WithName("GetRovertaskToStart").WithOpenApi();
             group.MapPost("/", CreateRoverTask).WithName("CreateRovertask").WithOpenApi();
             group.MapPut("/", UpdateRoverTask).WithName("UpdateRoverTask").WithOpenApi();
             return group;
         }
 
 
-        private static async Task<IResult> GetRoverTask(Guid id, HttpContext httpContext, MissionControlContext context)
+        private static async Task<IResult> GetRoverTask(Guid id, HttpContext httpContext, IRoverTaskRepository repository)
         {
-            return await context.RoverTasks.FindAsync(id) is RoverTask roverTask ? Results.Ok(roverTask) : Results.NotFound();
+            var roverTask = await repository.GetRoverTask(id);
+            return roverTask is null ? Results.NotFound() : Results.Ok(roverTask);
         }
 
-        private static IResult GetReadyRoverTask(Guid id, HttpContext httpContext, MissionControlContext context)
+        private static async Task<IResult> GetReadyRoverTasks(Guid id, HttpContext httpContext, IRoverTaskRepository repository)
         {
-            var tasks = context.RoverTasks.Where(_ => _.RoverId == id && _.Status == RoverTaskStatus.Ready).OrderBy(_ => _.Position);
+            var tasks = await repository.GetReadyRoverTasks(id);
             return Results.Ok(tasks);
         }
 
-        private static async Task<IResult> CreateRoverTask(RoverTask roverTask, HttpContext httpContext, MissionControlContext context)
+        private static async Task<IResult> CreateRoverTask(RoverTask roverTask, HttpContext httpContext, IRoverTaskRepository repository)
         {
-            var rover = await context.Rovers.FindAsync(roverTask.RoverId);
-
-            if (rover == null) return Results.NotFound();
-
-            var positoin = await context.RoverTasks.Where(_ => _.RoverId == rover.Id).MaxAsync(_ => _.Position);
-            roverTask.StatusUpdate = DateTime.Now;
-            roverTask.Position = ++positoin;
-            context.RoverTasks.Add(roverTask);
-            await context.SaveChangesAsync();
-
-            return Results.Created($"/tasks/{roverTask.Id}", roverTask);
+            var createdRoverTask = await repository.CreateRoverTask(roverTask);
+            return createdRoverTask is null ? Results.NotFound() : Results.Created($"/tasks/{createdRoverTask.Id}", createdRoverTask);
         }
 
-        private static async Task<IResult> UpdateRoverTask(RoverTask inputRoverTask, HttpContext httpContext, MissionControlContext context)
+        private static async Task<IResult> UpdateRoverTask(RoverTask inputRoverTask, HttpContext httpContext, IRoverTaskRepository repository)
         {
-            var roverTask = await context.RoverTasks.FindAsync(inputRoverTask.Id);
-
-            if (roverTask is null) return Results.NotFound();
-
-            roverTask.StatusUpdate = DateTime.Now;
-            roverTask.Status = inputRoverTask.Status;
-            roverTask.StatusInfo = inputRoverTask?.StatusInfo;
-
-            await context.SaveChangesAsync();
-
-            return Results.NoContent();
+            var updatedRoverTask = await repository.UpdateRoverTask(inputRoverTask);
+            return updatedRoverTask is null ? Results.NotFound() : Results.NoContent();
         }
     }
 }
