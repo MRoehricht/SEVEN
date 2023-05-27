@@ -10,6 +10,9 @@ namespace SEVEN.Rover.Core.Clients
     {
         private readonly string _baseUri;
         public RoverStatus? RoverStatus { get; private set; }
+
+        public Guid RoverId => Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D");
+
         public RoverClient(IOptions<RoverConnection> options)
         {
             if (options.Value.RoverUrl == null)

@@ -34,14 +34,14 @@ namespace SEVEN.MissionControl.API.DataLayer.Generators
                     Rover = roverOne,
                     Command = RoverTaskCommands.COMMAND_HEADLIGHTS_ON,
                     StatusUpdate = DateTime.Now.AddDays(-3),
-                    Status = RoverTaskStatus.Success,
+                    Status = RoverTaskStatus.Ready,
                     StatusInfo = null
                 }
                 ,
                 new RoverTask
                 {
                     Id = Guid.NewGuid(),
-                    Position = 3,
+                    Position = 2,
                     RoverId = roverOne.Id,
                     Rover = roverOne,
                     Command = RoverTaskCommands.COMMAND_CAMERA_TAKEFOTO,
@@ -52,12 +52,12 @@ namespace SEVEN.MissionControl.API.DataLayer.Generators
                 new RoverTask
                 {
                     Id = Guid.NewGuid(),
-                    Position = 2,
+                    Position = 3,
                     RoverId = roverOne.Id,
                     Rover = roverOne,
                     Command = RoverTaskCommands.COMMAND_HEADLIGHTS_OFF,
                     StatusUpdate = DateTime.Now.AddDays(-1),
-                    Status = RoverTaskStatus.Ready,
+                    Status = RoverTaskStatus.Success,
                     StatusInfo = null
                 }
                 );

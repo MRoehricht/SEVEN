@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 
 namespace SEVEN.Core.API.Client
 {
-    public class APIClient
+    public class APIClient : IAPIClient
     {
         private readonly string _baseUrl;
 

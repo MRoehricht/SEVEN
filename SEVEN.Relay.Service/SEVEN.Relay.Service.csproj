@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SEVEN.Core\SEVEN.Core.csproj" />
+    <ProjectReference Include="..\SEVEN.MissionControl.API.Client\SEVEN.MissionControl.API.Client.csproj" />
     <ProjectReference Include="..\SEVEN.Rover.Core\SEVEN.Rover.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-namespace SEVEN.Core.Client.Data
+namespace SEVEN.MissionControl.Client.Data
 {
     public class WeatherForecastService
     {

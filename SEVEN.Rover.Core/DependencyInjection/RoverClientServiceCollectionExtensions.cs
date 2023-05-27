@@ -17,10 +17,17 @@ public static class RoverClientServiceCollectionExtensions
     /// <param name="configuration"></param>
     /// <returns></returns>
     public static IServiceCollection AddRoverClient(
-              this IServiceCollection services, IConfiguration configuration)
+              this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
     {
         services.Configure<RoverConnection>(configuration.GetSection(nameof(RoverConnection)));
-        services.TryAddTransient<IRoverClient, RoverClient>();
+        if (isDevelopment)
+        {
+            services.TryAddTransient<IRoverClient, RoverDevelopmentClient>();
+        }
+        else
+        {
+            services.TryAddTransient<IRoverClient, RoverClient>();
+        }
 
         return services;
     }

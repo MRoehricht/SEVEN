@@ -96,9 +96,6 @@ namespace SEVEN.Core.API
             .WithName("UpdateRovertaskStatus")
             .WithOpenApi();
 
-
-
-
             app.Run();
         }
     }

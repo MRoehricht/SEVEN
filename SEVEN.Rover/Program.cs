@@ -41,13 +41,13 @@ namespace SEVEN.Rover
             {
                 //new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
                 //new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
-                //new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
+                new Option("Headlights ON", async() => await _roverClient.TurnHeadlights_On()),
                 //new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
                 //new Option("Take a picture", async() => WriteTemporaryMessage(await _roverClient.TakeFoto())),
                 new Option("Load Rover from API", async() => WriteRoverMessage(await apiClient.GetRover(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
                 new Option("Load all ready RoverTask from API", async() => WriteIEnumerableRoverTask(await apiClient.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
-                new Option("CreateTask from API", async() => await CreateTask(apiClient)),
-                new Option("UpdateTaskfrom API", async() => await UpdateTask(apiClient)),
+                new Option("API:COMMAND_HEADLIGHTS_ON", async() => await CreateTask(apiClient, true)),
+                new Option("API:COMMAND_HEADLIGHTS_OFF", async() => await CreateTask(apiClient, false)),
 
                 new Option("Exit", () => Environment.Exit(0)),
             };
@@ -140,16 +140,9 @@ namespace SEVEN.Rover
             WriteMenu(_options, _options.First());
         }
 
-        static async Task CreateTask(APIClient client)
+        static async Task CreateTask(APIClient client, bool on)
         {
-            await client.CreateRoverTask(new RoverTask() { Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Command = RoverTaskCommands.COMMAND_CAMERA_MOVE_LEFT });
-            WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
-        }
-
-        static async Task UpdateTask(APIClient client)
-        {
-            await client.UpdateRoverTaskStatus(new RoverTask() { Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Status = RoverTaskStatus.Started });
-
+            await client.CreateRoverTask(new RoverTask() { Id = Guid.NewGuid(), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"), Command = on ? RoverTaskCommands.COMMAND_HEADLIGHTS_ON : RoverTaskCommands.COMMAND_HEADLIGHTS_OFF });
             WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
         }
 

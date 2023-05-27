@@ -4,6 +4,7 @@ namespace SEVEN.Rover.Core.Clients
 {
     public interface IRoverClient
     {
+        Guid RoverId { get; }
         RoverStatus? RoverStatus { get; }
 
         Task<bool> GetHeadlights_Status();
