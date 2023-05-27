@@ -27,7 +27,7 @@ namespace SEVEN.Rover
             RoverConnection connection = new() { RoverUrl = roverConnection };
             IOptions<RoverConnection> roverOptions = Options.Create(connection);
 
-            APIConnection apiConnection = new() { BaseUrl = "https://localhost:7272/" };
+            APIConnection apiConnection = new() { BaseUrl = "https://localhost:7217/" };
             IOptions<APIConnection> apiOptions = Options.Create(apiConnection);
 
 
