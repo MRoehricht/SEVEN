@@ -22,6 +22,7 @@ namespace SEVEN.MissionControl.Server
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddTransient<IRoverTaskRepository, RoverTaskRepository>();
+            builder.Services.AddTransient<IProbeRepository, ProbeRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -55,6 +56,7 @@ namespace SEVEN.MissionControl.Server
 
             app.MapGroup("/rover").RoverGroup();
             app.MapGroup("/tasks").RoverTaskGroup();
+            app.MapGroup("/probe").ProbeGroup();
 
             app.Run();
         }

@@ -10,6 +10,7 @@ namespace SEVEN.MissionControl.Server.Data.Contexts
 
         public DbSet<Rover> Rovers { get; set; }
         public DbSet<RoverTask> RoverTasks { get; set; }
+        public DbSet<Probe> Probes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

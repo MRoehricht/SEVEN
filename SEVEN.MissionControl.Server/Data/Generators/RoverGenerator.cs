@@ -23,6 +23,15 @@ namespace SEVEN.MissionControl.Server.Data.Generators
                     GeoCoordinates = new GeoCoordinates("50.85953679509189", "11.19558185972183")
                 };
 
+                var probeOne = new Probe
+                {
+                    Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"),
+                    Name = "Probe1",
+                    Measurements = ProbeMeasurement.Temperature | ProbeMeasurement.Humidity,
+                    SendingIntervalMinutes = 5
+                };
+
+                context.Probes.Add(probeOne);
                 context.Rovers.Add(roverOne);
 
                 context.RoverTasks.AddRange(
