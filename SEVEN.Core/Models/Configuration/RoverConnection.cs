@@ -1,7 +1,6 @@
-﻿namespace SEVEN.Core.Models.Configuration
+﻿namespace SEVEN.Core.Models.Configuration;
+
+public class RoverConnection
 {
-    public class RoverConnection
-    {
-        public string? RoverUrl { get; set; }
-    }
+    public string? RoverUrl { get; set; }
 }

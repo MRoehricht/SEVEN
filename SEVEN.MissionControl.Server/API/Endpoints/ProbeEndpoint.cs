@@ -1,6 +1,6 @@
 ﻿using SEVEN.Core.Models;
 using SEVEN.MissionControl.Server.Data.Contexts;
-using SEVEN.MissionControl.Server.Data.Repositories;
+using SEVEN.MissionControl.Server.Data.Repositories.Interfaces;
 
 namespace SEVEN.MissionControl.Server.API.Endpoints;
 
@@ -12,16 +12,16 @@ public static class ProbeEndpoint
         group.MapPost("/", CreateProbe).WithName("CreateProbe").WithOpenApi();
         group.MapPut("/", UpdateProbe).WithName("UpdateProbe").WithOpenApi();
         group.MapDelete("/", RemoveProbe).WithName("RemoveProbe").WithOpenApi();
-        
+
         return group;
     }
-    
+
     private static async Task<IResult> GetProbe(Guid id, HttpContext httpContext, MissionControlContext context)
     {
         var probe = await context.Probes.FindAsync(id);
         return probe != null ? Results.Ok(probe) : Results.NotFound();
     }
-    
+
     private static async Task<IResult> CreateProbe(Probe probe, IProbeRepository repository)
     {
         var createdProbe = await repository.CreateProbe(probe);
@@ -33,10 +33,10 @@ public static class ProbeEndpoint
         var updatedProbe = await repository.UpdateProbe(probe);
         return updatedProbe is null ? Results.NotFound() : Results.Created($"/probe/{updatedProbe.Id}", updatedProbe);
     }
-    
+
     private static async Task<IResult> RemoveProbe(Guid id, IProbeRepository repository)
     {
         var isProbeDeleted = await repository.RemoveProbe(id);
-        return isProbeDeleted  ? Results.NoContent() : Results.NotFound() ;
+        return isProbeDeleted ? Results.NoContent() : Results.NotFound();
     }
 }

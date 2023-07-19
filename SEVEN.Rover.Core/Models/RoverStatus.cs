@@ -1,11 +1,10 @@
-﻿namespace SEVEN.Rover.Core.Models
+﻿namespace SEVEN.Rover.Core.Models;
+
+public class RoverStatus
 {
-    public class RoverStatus
-    {
-        public string? Id { get; set; }
+    public string? Id { get; set; }
 
-        public List<SwitchStatus> SwitchStatuses { get; set; } = new List<SwitchStatus>();
+    public List<SwitchStatus> SwitchStatuses { get; set; } = new();
 
-        public string? ImageData { get; set; }
-    }
+    public string? ImageData { get; set; }
 }

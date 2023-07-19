@@ -1,7 +1,6 @@
-﻿namespace SEVEN.Rover.Core.Constants
+﻿namespace SEVEN.Rover.Core.Constants;
+
+public static class RoverStatusNames
 {
-    public static class RoverStatusNames
-    {
-        public const string STATUS_HEADLIGHTS = "Headlights";
-    }
+    public const string STATUS_HEADLIGHTS = "Headlights";
 }

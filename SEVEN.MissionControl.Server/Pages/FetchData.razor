@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
-@using SEVEN.MissionControl.Server.Data
-@inject WeatherForecastService ForecastService
+@using SEVEN.Core.Models
+@using SEVEN.MissionControl.Server.Data.Repositories.Interfaces
+@inject IMeasurementRepository MeasurementRepository
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -8,40 +9,45 @@
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (_measurements == null)
 {
-    <p><em>Loading...</em></p>
+    <p>
+        <em>Loading...</em>
+    </p>
 }
 else
 {
     <table class="table">
         <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <th>ProbeId</th>
+            <th>Value</th>
+            <th>MeasurementType</th>
+            <th>Time</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
+        @foreach (var measurement in _measurements)
+        {
+            <tr>
+                <td>@measurement.Id</td>
+                <td>@measurement.ProbeId</td>
+                <td>@measurement.Value</td>
+                <td>@measurement.MeasurementType</td>
+                <td>@measurement.Time</td>
+            </tr>
+        }
         </tbody>
     </table>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private IEnumerable<Measurement>? _measurements;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        _measurements = await MeasurementRepository.GetMeasurements();
     }
+
 }

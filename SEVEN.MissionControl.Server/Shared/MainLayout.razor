@@ -1,25 +1,26 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggle())"/>
         SEVEN - Sandberg Electric Vehicle Eden Network
-        <MudSpacer />
+        <MudSpacer/>
         <MudToggleIconButton @bind-Toggled="@_isDarkMode"
                              Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Default" Title="Off"
-                             ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Default" ToggledTitle="On" />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MRoehricht/SEVEN" Target="_blank" />
+                             ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Default" ToggledTitle="On"/>
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MRoehricht/SEVEN" Target="_blank"/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="@DrawerClipMode.Always" Breakpoint="@Breakpoint.Sm" OpenMiniOnHover="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
-           
+
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" href="">Dashboard</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings" href="counter">counter</MudNavLink>     
+            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings" href="counter">counter</MudNavLink>
             <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Task" href="rovertasks">Rovertasks</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List" href="fetchdata">Measurements</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
@@ -30,7 +31,7 @@
 </MudLayout>
 
 @code {
-    private MudTheme _theme = new();
+    private readonly MudTheme _theme = new();
     private bool _isDarkMode;
     private bool _drawerOpen = true;
 
@@ -38,5 +39,5 @@
     {
         _drawerOpen = !_drawerOpen;
     }
-}
 
+}

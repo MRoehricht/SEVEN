@@ -1,6 +1,6 @@
 ﻿using SEVEN.Core.Models;
 
-namespace SEVEN.MissionControl.Server.Data.Repositories;
+namespace SEVEN.MissionControl.Server.Data.Repositories.Interfaces;
 
 public interface IProbeRepository
 {

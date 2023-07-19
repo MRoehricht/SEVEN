@@ -1,7 +1,6 @@
-﻿namespace SEVEN.Core.Models.Configuration
+﻿namespace SEVEN.Core.Models.Configuration;
+
+public class APIConnection
 {
-    public class APIConnection
-    {
-        public string? BaseUrl { get; set; }
-    }
+    public string? BaseUrl { get; set; }
 }

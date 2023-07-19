@@ -1,16 +1,18 @@
 ﻿using SEVEN.Core.Models;
 using SEVEN.MissionControl.Server.Data.Contexts;
+using SEVEN.MissionControl.Server.Data.Repositories.Interfaces;
 
 namespace SEVEN.MissionControl.Server.Data.Repositories;
 
 public class ProbeRepository : IProbeRepository
 {
     private readonly MissionControlContext _context;
+
     public ProbeRepository(MissionControlContext context)
     {
         _context = context;
     }
-    
+
     public async Task<Probe> CreateProbe(Probe probe)
     {
         probe.Id = Guid.NewGuid();
