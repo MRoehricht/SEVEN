@@ -8,7 +8,7 @@ public static class MeasurementEndpoint
     public static RouteGroupBuilder MeasurementGroup(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetMeasurements).WithName("GetMeasurements").WithOpenApi();
-        group.MapPost("/", PostMeasurement).WithName("PostMeasurement").WithOpenApi();
+        group.MapPost("/", PostMeasurement).WithName("PostMeasurement").RequireAuthorization().WithOpenApi();
         return group;
     }
 

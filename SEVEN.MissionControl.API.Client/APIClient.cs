@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SEVEN.Core.Models;
@@ -85,5 +86,33 @@ public class APIClient : IAPIClient
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.PutAsJsonAsync("/tasks", roverTask);
         response?.EnsureSuccessStatusCode();
+    }
+
+    public async Task<ProbeToken> GetProbeToken(Guid probeId)
+    {
+        using var handler = new HttpClientHandler();
+        using var client = new HttpClient(handler);
+
+        client.BaseAddress = new Uri(_baseUrl);
+        var response = await client.GetAsync("/authentication/" + probeId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ProbeToken>(jsonString);
+        }
+
+        return null;
+    }
+
+    public async Task CreateMeasurement(Measurement measurement, ProbeToken token)
+    {
+        using var handler = new HttpClientHandler();
+        using var client = new HttpClient(handler);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Token);
+
+        client.BaseAddress = new Uri(_baseUrl);
+        var response = await client.PostAsJsonAsync("/measurement", measurement);
     }
 }
