@@ -54,6 +54,8 @@ internal class Program
                     await apiClient.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
             new("API:COMMAND_HEADLIGHTS_ON", async () => await CreateTask(apiClient, true)),
             new("API:COMMAND_HEADLIGHTS_OFF", async () => await CreateTask(apiClient, false)),
+            new("API:LOAD TOKEN", async () => await GetToken(apiClient)),
+            new("API:LOAD TOKEN", async () => await CreateMe(apiClient)),
 
             new("Exit", () => Environment.Exit(0))
         };
@@ -155,6 +157,37 @@ internal class Program
         WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
     }
 
+    private static async Task GetToken(APIClient client)
+    {
+        var token = await client.GetProbeToken(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
+        System.Console.Clear();
+        System.Console.WriteLine(token.Type);
+        System.Console.WriteLine(token.Token);
+        System.Console.WriteLine();
+        Thread.Sleep(2000);
+        WriteMenu(_options, _options.First());
+    }
+    
+    private static async Task CreateMe(APIClient client)
+    {
+        var token = await client.GetProbeToken(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
+
+        var measurement = await client.CreateMeasurement(
+            new Measurement()
+            {
+                MeasurementType = MeasurementType.Humidity, Value = "56%",
+                ProbeId = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D")
+            }, token);
+        
+        System.Console.Clear();
+        System.Console.WriteLine(measurement.Id);
+        System.Console.WriteLine(measurement.Time);
+        System.Console.WriteLine();
+        Thread.Sleep(2000);
+        WriteMenu(_options, _options.First());
+    }
+    
+    
 
     private static void WriteMenu(List<Option> _options, Option selectedOption)
     {

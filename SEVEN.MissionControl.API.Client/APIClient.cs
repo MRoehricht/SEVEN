@@ -88,13 +88,13 @@ public class APIClient : IAPIClient
         response?.EnsureSuccessStatusCode();
     }
 
-    public async Task<ProbeToken> GetProbeToken(Guid probeId)
+    public async Task<ProbeToken?> GetProbeToken(Guid probeId)
     {
         using var handler = new HttpClientHandler();
         using var client = new HttpClient(handler);
 
         client.BaseAddress = new Uri(_baseUrl);
-        var response = await client.GetAsync("/authentication/" + probeId);
+        var response = await client.GetAsync("/authentication?id=" + probeId);
 
         if (response.IsSuccessStatusCode)
         {
@@ -105,7 +105,7 @@ public class APIClient : IAPIClient
         return null;
     }
 
-    public async Task CreateMeasurement(Measurement measurement, ProbeToken token)
+    public async Task<Measurement?> CreateMeasurement(Measurement measurement, ProbeToken token)
     {
         using var handler = new HttpClientHandler();
         using var client = new HttpClient(handler);
@@ -114,5 +114,13 @@ public class APIClient : IAPIClient
 
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.PostAsJsonAsync("/measurement", measurement);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<Measurement>(jsonString);
+        }
+
+        return null;
     }
 }
