@@ -1,7 +1,7 @@
 ﻿namespace SEVEN.Core.Models;
 
 [Flags]
-public enum ProbeMeasurement
+public enum MeasurementType
 {
     Temperature = 0,
     Percent = 1,
@@ -10,4 +10,5 @@ public enum ProbeMeasurement
     UvRadiation = 8,
     LightIntensity = 16,
     SwitchingState = 32,
+    SoilMoisture = 64
 }

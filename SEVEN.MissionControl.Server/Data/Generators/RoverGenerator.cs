@@ -27,7 +27,7 @@ namespace SEVEN.MissionControl.Server.Data.Generators
                 {
                     Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"),
                     Name = "Probe1",
-                    Measurements = ProbeMeasurement.Temperature | ProbeMeasurement.Humidity,
+                    MeasurementsType = MeasurementType.Temperature | MeasurementType.Humidity,
                     SendingIntervalMinutes = 5
                 };
 

@@ -25,7 +25,7 @@ public class ProbeRepository : IProbeRepository
         if (dbProbe != null)
         {
             dbProbe.Name = probe.Name;
-            dbProbe.Measurements = probe.Measurements;
+            dbProbe.MeasurementsType = probe.MeasurementsType;
 
             await _context.SaveChangesAsync();
         }
