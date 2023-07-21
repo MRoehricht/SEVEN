@@ -3,7 +3,7 @@ using SEVEN.Core.API.Client;
 using SEVEN.Core.Models;
 using SEVEN.Rover.Core.Clients;
 
-namespace SEVEN.Relay.Service;
+namespace SEVEN.Relay.API.BackgroundServices;
 
 public class RelayService : BackgroundService
 {
