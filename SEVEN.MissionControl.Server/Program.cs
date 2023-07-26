@@ -26,6 +26,16 @@ public class Program
 
         builder.Services.AddDbContext<MissionControlContext>(options =>
             options.UseInMemoryDatabase("MissionControlContextDB"));
+        
+        builder.Services.AddDbContext<MissionControlContext>(optionsAction => {
+            var postgresHost = builder.Configuration["DB_HOST"];
+            var postgresPort = builder.Configuration["DB_PORT"];
+            var postgresDatabase = builder.Configuration["DB_DB"];
+            var postgresUser = builder.Configuration["DB_USER"];
+            var postgresPassword = builder.Configuration["DB_PASSWORD"];
+            optionsAction.UseNpgsql($"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};");
+            optionsAction.UseOpenIddict();
+        });
 
         var sevenOptions = new SEVENOptions();
         builder.Configuration.Bind(sevenOptions);

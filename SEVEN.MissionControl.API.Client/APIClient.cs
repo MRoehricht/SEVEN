@@ -111,6 +111,8 @@ public class APIClient : IAPIClient
         using var client = new HttpClient(handler);
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token.Token);
+        
+        //=> DelegatingHandler
 
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.PostAsJsonAsync("/measurement", measurement);

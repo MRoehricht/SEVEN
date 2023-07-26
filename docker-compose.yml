@@ -1,0 +1,41 @@
+﻿networks:
+  seven-network:
+    driver: bridge
+
+services:
+  seven_server:
+    container_name: seven-server
+    image: seven.missioncontrol.server
+    ports:
+      - 8000:80
+    build:
+      context: .
+      dockerfile: SEVEN.MissionControl.Server/Dockerfile
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DB=seven
+      - DB_USER=seven
+      - DB_PASSWORD=seven
+    restart: always
+    networks:
+      - seven-network      
+  postgres:
+    container_name: seven-postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_USER=seven
+      - POSTGRES_PASSWORD=seven
+      - POSTGRES_DB=seven
+    networks:
+      - seven-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tracktogether"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+        
+    
