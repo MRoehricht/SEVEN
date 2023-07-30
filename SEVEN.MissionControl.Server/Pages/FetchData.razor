@@ -16,8 +16,8 @@
     </p>
 }
 else
-{    
-    <MudDataGrid Items="@_measurements">
+{
+    <MudDataGrid Items="@_measurements" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Probe.Name" Title="Sonde" />
             <PropertyColumn Property="x => x.MeasurementType" Title="Type" />
