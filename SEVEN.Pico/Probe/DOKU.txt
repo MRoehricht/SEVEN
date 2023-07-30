@@ -1,0 +1,9 @@
+PM280
+SCL => 22 (über 21)
+SDA => 21 (unten rechts)
+
+SEN-UV01
+OUT => 31
+
+MS2.0
+OUT => 32

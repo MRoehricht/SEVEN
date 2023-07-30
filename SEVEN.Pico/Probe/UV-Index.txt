@@ -1,0 +1,12 @@
+    #<50 => UV-Index 0
+    #<227 => UV-Index 1
+    #<318 => UV-Index 2
+    #<408 => UV-Index 3
+    #<503 => UV-Index 4
+    #<606 => UV-Index 5
+    #<696 => UV-Index 6
+    #<795 => UV-Index 7
+    #<881 => UV-Index 8
+    #<976 => UV-Index 9
+    #<1079 => UV-Index 10
+    #>1170 => UV-Index 11
