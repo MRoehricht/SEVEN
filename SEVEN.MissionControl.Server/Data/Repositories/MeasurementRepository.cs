@@ -16,7 +16,7 @@ public class MeasurementRepository : IMeasurementRepository
 
     public async Task<IEnumerable<Measurement>> GetMeasurements()
     {
-        return await _context.Measurements.AsNoTracking().ToListAsync();
+        return await _context.Measurements.Include(_ => _.Probe).AsNoTracking().ToListAsync();
     }
 
     public async Task<Measurement?> CreateMeasurement(Measurement measurement)

@@ -3,11 +3,11 @@
 @using SEVEN.MissionControl.Server.Data.Repositories.Interfaces
 @inject IMeasurementRepository MeasurementRepository
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Messdaten</PageTitle>
 
-<h1>Weather forecast</h1>
+<h1>Messdaten</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p>All deine Messdaten auf einen Blick.</p>
 
 @if (_measurements == null)
 {
@@ -16,30 +16,16 @@
     </p>
 }
 else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>ProbeId</th>
-            <th>Value</th>
-            <th>MeasurementType</th>
-            <th>Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var measurement in _measurements)
-        {
-            <tr>
-                <td>@measurement.Id</td>
-                <td>@measurement.ProbeId</td>
-                <td>@measurement.Value</td>
-                <td>@measurement.MeasurementType</td>
-                <td>@measurement.Time</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+{    
+    <MudDataGrid Items="@_measurements">
+        <Columns>
+            <PropertyColumn Property="x => x.Probe.Name" Title="Sonde" />
+            <PropertyColumn Property="x => x.MeasurementType" Title="Type" />
+            <PropertyColumn Property="x => x.Value" Title="Wert" />
+            <PropertyColumn Property="x => x.Time.ToLongDateString()" Title="Datum" />
+            <PropertyColumn Property="x => x.LocalTime.ToShortTimeString()" Title="Uhrzeit" />
+        </Columns>
+    </MudDataGrid>
 }
 
 @code {

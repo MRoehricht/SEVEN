@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using SEVEN.MissionControl.API.Client.DependencyInjection;
+using SEVEN.Relay.API.BackgroundServices;
 using SEVEN.Relay.API.Data.Contexts;
 using SEVEN.Relay.API.Data.Repositories;
 using SEVEN.Relay.API.Endpoints;
-using SEVEN.MissionControl.API.Client.DependencyInjection;
-using SEVEN.Relay.API.BackgroundServices;
 using SEVEN.Rover.Core.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

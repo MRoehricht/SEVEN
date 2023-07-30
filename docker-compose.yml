@@ -1,13 +1,18 @@
-﻿networks:
+version: '3.4'
+networks:
   seven-network:
     driver: bridge
 
+volumes:
+  seven-data:
+    driver: local
+
 services:
-  seven_server:
-    container_name: seven-server
-    image: seven.missioncontrol.server
+  seven.missioncontrol.server:
+    image: ${DOCKER_REGISTRY-}sevenmissioncontrolserver
     ports:
-      - 8000:80
+      - 7217:443
+      - 5009:80
     build:
       context: .
       dockerfile: SEVEN.MissionControl.Server/Dockerfile
@@ -23,6 +28,8 @@ services:
   postgres:
     container_name: seven-postgres
     image: postgres:latest
+    volumes:
+      - seven-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     restart: always
@@ -37,5 +44,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-        
-    

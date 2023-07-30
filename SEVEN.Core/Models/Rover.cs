@@ -8,5 +8,5 @@ public class Rover
 
     public string? Name { get; set; }
     public ICollection<RoverTask> Tasks { get; set; } = new List<RoverTask>();
-    public GeoCoordinates GeoCoordinates { get; set; }
+    //public GeoCoordinates GeoCoordinates { get; set; }
 }

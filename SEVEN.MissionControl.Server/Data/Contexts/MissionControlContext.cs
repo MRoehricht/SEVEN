@@ -8,6 +8,8 @@ public class MissionControlContext : DbContext
     public MissionControlContext(DbContextOptions<MissionControlContext> options)
         : base(options)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
     }
 
     public DbSet<Rover> Rovers { get; set; }
@@ -22,5 +24,10 @@ public class MissionControlContext : DbContext
             .WithOne(e => e.Rover)
             .HasForeignKey(e => e.RoverId)
             .IsRequired();
+
+        modelBuilder.Entity<Probe>()
+            .HasMany(p => p.Measurements)
+            .WithOne(m => m.Probe)
+            .HasForeignKey(m => m.ProbeId);
     }
 }

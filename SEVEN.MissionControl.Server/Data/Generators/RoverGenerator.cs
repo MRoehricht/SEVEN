@@ -11,6 +11,8 @@ public class RoverGenerator
         using (var context = new MissionControlContext(services.BuildServiceProvider()
                    .GetRequiredService<DbContextOptions<MissionControlContext>>()))
         {
+            context.Database.EnsureCreated();
+
             // Look for any board games.
             if (context.Rovers.Any()) return; // Data was already seeded
 
@@ -18,7 +20,7 @@ public class RoverGenerator
             {
                 Id = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"),
                 Name = "Sandberg1",
-                GeoCoordinates = new GeoCoordinates("50.85953679509189", "11.19558185972183")
+                //GeoCoordinates = new GeoCoordinates("50.85953679509189", "11.19558185972183")
             };
 
             var probeOne = new Probe

@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
 <MudDialogProvider/>
@@ -11,16 +11,19 @@
         <MudSpacer/>
         <MudToggleIconButton @bind-Toggled="@_isDarkMode"
                              Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Default" Title="Off"
-                             ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Default" ToggledTitle="On"/>
+                             ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Default" ToggledTitle="On"/>       
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MRoehricht/SEVEN" Target="_blank"/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="@DrawerClipMode.Always" Breakpoint="@Breakpoint.Sm" OpenMiniOnHover="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
 
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" href="">Dashboard</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings" href="counter">counter</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" href="">Home</MudNavLink>            
             <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Task" href="rovertasks">Rovertasks</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List" href="fetchdata">Measurements</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List" href="fetchdata">Messdaten</MudNavLink>           
+            <MudNavGroup Title="Diagramme" Icon="@Icons.Material.Filled.SsidChart" Expanded="true">
+                <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DeviceThermostat" href="counter">Temperatur</MudNavLink>
+                @*<MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.WbSunny" href="counter">UV-Index</MudNavLink>  *@              
+            </MudNavGroup>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">

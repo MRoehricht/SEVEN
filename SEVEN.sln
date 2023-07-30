@@ -19,14 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SEVEN.Shared", "SEVEN.Share
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEVEN.Core", "SEVEN.Core\SEVEN.Core.csproj", "{45B3D189-FD8F-4FDA-9473-D2D335318723}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.MissionControl.Server", "SEVEN.MissionControl.Server\SEVEN.MissionControl.Server.csproj", "{453D4AC4-F2E2-47FC-9E5D-58354F5E6135}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEVEN.MissionControl.Server", "SEVEN.MissionControl.Server\SEVEN.MissionControl.Server.csproj", "{453D4AC4-F2E2-47FC-9E5D-58354F5E6135}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.Relay.API", "SEVEN.Relay.API\SEVEN.Relay.API.csproj", "{FF8CF29F-D020-41DC-AC14-8B349AA3884A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEVEN.Relay.API", "SEVEN.Relay.API\SEVEN.Relay.API.csproj", "{FF8CF29F-D020-41DC-AC14-8B349AA3884A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0819C78-1E97-4DA4-AF79-4B624608E1C7}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-	EndProjectSection
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +55,10 @@ Global
 		{FF8CF29F-D020-41DC-AC14-8B349AA3884A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF8CF29F-D020-41DC-AC14-8B349AA3884A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF8CF29F-D020-41DC-AC14-8B349AA3884A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

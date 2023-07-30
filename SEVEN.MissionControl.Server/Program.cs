@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -14,6 +12,8 @@ using SEVEN.MissionControl.Server.Options;
 using SEVEN.MissionControl.Server.Services;
 using SEVEN.MissionControl.Server.Services.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 
 namespace SEVEN.MissionControl.Server;
@@ -24,10 +24,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDbContext<MissionControlContext>(options =>
-            options.UseInMemoryDatabase("MissionControlContextDB"));
-        
-        builder.Services.AddDbContext<MissionControlContext>(optionsAction => {
+        //builder.Services.AddDbContext<MissionControlContext>(options =>
+        //    options.UseInMemoryDatabase("MissionControlContextDB"));
+
+        builder.Services.AddDbContext<MissionControlContext>(optionsAction =>
+        {
             var postgresHost = builder.Configuration["DB_HOST"];
             var postgresPort = builder.Configuration["DB_PORT"];
             var postgresDatabase = builder.Configuration["DB_DB"];
@@ -40,7 +41,7 @@ public class Program
         var sevenOptions = new SEVENOptions();
         builder.Configuration.Bind(sevenOptions);
         builder.Services.Configure<SEVENOptions>(builder.Configuration);
-        
+
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddMudServices();
@@ -50,26 +51,28 @@ public class Program
         builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
         builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
-        
+
         builder.Services.AddAuthorization();
 
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-        builder.Services.AddAuthentication().AddJwtBearer(opt => {
-                opt.TokenValidationParameters = new TokenValidationParameters {
-                    ValidIssuer = "SEVEN",
-                    ValidAudience = "SEVEN",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sevenOptions.PROBE_SECRET)),
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    NameClaimType = OpenIddictConstants.Claims.Subject,
-                    RoleClaimType = OpenIddictConstants.Claims.Role
-                };
-            });
-        
+        builder.Services.AddAuthentication().AddJwtBearer(opt =>
+        {
+            opt.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "SEVEN",
+                ValidAudience = "SEVEN",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sevenOptions.PROBE_SECRET)),
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+                NameClaimType = OpenIddictConstants.Claims.Subject,
+                RoleClaimType = OpenIddictConstants.Claims.Role
+            };
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
@@ -82,7 +85,7 @@ public class Program
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer"
             });
-            
+
             options.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {
                 {
@@ -126,7 +129,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -138,7 +141,7 @@ public class Program
         app.MapGroup("/probe").ProbeGroup();
         app.MapGroup("/measurement").MeasurementGroup();
         app.MapGroup("/authentication").AuthenticationGroup();
-        
+
         app.Run();
     }
 }
