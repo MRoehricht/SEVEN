@@ -19,6 +19,14 @@ public class MeasurementRepository : IMeasurementRepository
         return await _context.Measurements.Include(_ => _.Probe).AsNoTracking().ToListAsync();
     }
 
+    public async Task<Measurement?> GetLastMeasurement(Guid probeId)
+    {
+        var measurements = await GetMeasurements();
+        var measurement = measurements.Where(_ => _.ProbeId == probeId).OrderByDescending(_ => _.Time)?.FirstOrDefault();
+        return measurement;
+    }
+
+
     public async Task<Measurement?> CreateMeasurement(Measurement measurement)
     {
         var probe = await _context.Probes.FindAsync(measurement.ProbeId);

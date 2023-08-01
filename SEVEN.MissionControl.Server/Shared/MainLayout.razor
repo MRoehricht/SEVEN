@@ -16,8 +16,8 @@
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="@DrawerClipMode.Always" Breakpoint="@Breakpoint.Sm" OpenMiniOnHover="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
-
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" href="">Home</MudNavLink>            
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" href="">Home</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" href="dashboard">Dashboard</MudNavLink>
             <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Task" href="rovertasks">Rovertasks</MudNavLink>
             <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List" href="fetchdata">Messdaten</MudNavLink>           
             <MudNavGroup Title="Diagramme" Icon="@Icons.Material.Filled.SsidChart" Expanded="true">

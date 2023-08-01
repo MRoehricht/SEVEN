@@ -24,8 +24,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        //builder.Services.AddDbContext<MissionControlContext>(options =>
-        //    options.UseInMemoryDatabase("MissionControlContextDB"));
+        //builder.Services.AddDbContext<MissionControlContext>(options => options.UseInMemoryDatabase("MissionControlContextDB"));
 
         builder.Services.AddDbContext<MissionControlContext>(optionsAction =>
         {

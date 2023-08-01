@@ -1,0 +1,54 @@
+﻿@page "/dashboard"
+@using SEVEN.Core.Models
+@using SEVEN.MissionControl.Server.Data.Repositories.Interfaces
+@inject IMeasurementRepository MeasurementRepository
+@implements IDisposable
+
+<PageTitle>Dashboard</PageTitle>
+
+<h1>Dashboard</h1>
+
+<p>All deine Messdaten auf einen Blick.</p>
+
+@if (_measurement == null)
+{
+    <p>
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </p>
+}
+else
+{
+    <MudPaper Class="pa-16 ma-2">
+        <label> @_measurement.ProbeName</label>
+        <br>
+        <label>Wert: @_measurement.Value %</label>
+        
+    </MudPaper>
+}
+
+@code {
+    private Measurement? _measurement;
+    private System.Threading.Timer timer = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _measurement = await MeasurementRepository.GetLastMeasurement(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
+        var timer = new System.Threading.Timer((_) =>
+       {
+
+       InvokeAsync(async () =>
+       {
+           _measurement = await MeasurementRepository.GetLastMeasurement(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
+           StateHasChanged();
+       });
+       }, null, 0, 10000);
+    }
+
+    
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+}
