@@ -9,6 +9,7 @@ public static class MeasurementEndpoint
     public static RouteGroupBuilder MeasurementGroup(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetMeasurements).WithName("GetMeasurements").WithOpenApi();
+        group.MapGet("/", GetFilteredMeasurements).WithName("GetFilteredMeasurements").WithOpenApi();
         group.MapGet("/create/{message}", CreateMessages).WithName("CreateMessages").WithOpenApi();
         group.MapPost("/", PostMeasurement).WithName("PostMeasurement").RequireAuthorization().WithOpenApi();
         return group;
@@ -17,6 +18,22 @@ public static class MeasurementEndpoint
     private static async Task<IResult> GetMeasurements(IMeasurementRepository repository)
     {
         var measurements = await repository.GetMeasurements();
+        return Results.Ok(measurements);
+    }
+
+    private static async Task<IResult> GetFilteredMeasurements(MeasurementFilter filter, IMeasurementRepository repository) {    
+        var measurements = await repository.GetMeasurements();
+        if (filter == null) return Results.Ok(measurements);
+
+        if (filter.ProbeId.HasValue)
+            measurements = measurements.Where(_ => _.ProbeId == filter.ProbeId.Value);
+
+        if (filter.Date.HasValue)
+            measurements = measurements.Where(_ => DateOnly.FromDateTime(_.Time) == filter.Date.Value);
+
+        if (filter.Type.HasValue)
+            measurements = measurements.Where(_ => _.MeasurementType.HasFlag(filter.Type.Value));
+
         return Results.Ok(measurements);
     }
     
