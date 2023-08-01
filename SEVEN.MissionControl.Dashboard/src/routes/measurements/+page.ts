@@ -1,4 +1,4 @@
-const data = [
+const data: Measurement[] = [
 	{
 		id: '762cc57d-6fda-468e-89c3-7a030749095d',
 		probeId: '7a73f8ae-0000-0000-bbbb-7ab5a00a9c1d',
@@ -2133,8 +2133,8 @@ export async function load({ fetch, params }) {
 export type Measurement = {
 	id: string;
 	probeId: string;
-	measurementType: string;
-	value: number;
+	measurementType: number;
+	value: string;
 	time: string;
 	localTime: string;
 };
