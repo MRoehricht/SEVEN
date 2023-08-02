@@ -1,24 +1,7 @@
 <script lang="ts">
 	import 'carbon-components-svelte/css/all.css';
-
-	import {
-		Header,
-		SideNav,
-		SideNavItems,
-		SideNavMenu,
-		SideNavMenuItem,
-		SideNavLink,
-		SideNavDivider,
-		SkipToContent,
-		Content,
-		Tile,
-		Theme
-	} from 'carbon-components-svelte';
-	import { Home, DocumentTasks, CloudDataOps, Diagram } from 'carbon-icons-svelte';
-
 	import '@carbon/styles/css/styles.css';
 	import '@carbon/charts-svelte/styles.css';
-	import { LineChart, ScaleTypes } from '@carbon/charts-svelte';
 
 	import type { CarbonTheme } from 'carbon-components-svelte/types/Theme/Theme.svelte';
 

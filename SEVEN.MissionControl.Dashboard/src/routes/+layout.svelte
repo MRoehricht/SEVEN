@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	import 'carbon-components-svelte/css/all.css';
 
 	import {
@@ -21,6 +23,16 @@
 
 	let isSideNavOpen = false;
 	let theme: CarbonTheme = 'g10';
+
+	let path: string;
+	let unsubscribe = page.subscribe((value) => {
+		path = value.route.id ?? '/';
+		console.log(path);
+	});
+
+	export function onDestroy() {
+		unsubscribe();
+	}
 </script>
 
 <Theme bind:theme />
@@ -33,12 +45,26 @@
 
 <SideNav bind:isOpen={isSideNavOpen} rail>
 	<SideNavItems>
-		<SideNavLink icon={Home} text="Home" href="/" isSelected />
-		<SideNavLink icon={DocumentTasks} text="Rovertasks" href="/" />
-		<SideNavLink icon={CloudDataOps} text="Messdaten" href="/measurements" />
+		<SideNavLink icon={Home} text="Home" href="/" isSelected={path === '/'} />
+		<SideNavLink
+			icon={DocumentTasks}
+			text="Rovertasks"
+			href="/tasks"
+			isSelected={path?.endsWith('/tasks')}
+		/>
+		<SideNavLink
+			icon={CloudDataOps}
+			text="Messdaten"
+			href="/measurements"
+			isSelected={path?.endsWith('/measurements')}
+		/>
 		<SideNavDivider />
 		<SideNavMenu icon={Diagram} text="Diagramme">
-			<SideNavMenuItem href="/" text="Temperatur" />
+			<SideNavMenuItem
+				href="/diagramms/temperature"
+				text="Temperatur"
+				isSelected={path?.endsWith('/diagramms/temperature')}
+			/>
 		</SideNavMenu>
 	</SideNavItems>
 </SideNav>
