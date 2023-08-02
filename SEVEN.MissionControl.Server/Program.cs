@@ -24,18 +24,48 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        //builder.Services.AddDbContext<MissionControlContext>(options => options.UseInMemoryDatabase("MissionControlContextDB"));
+        builder.Services.AddOpenIddict(options => {
+            options.AddClient(opt => {
+                opt.AllowAuthorizationCodeFlow();
 
-        builder.Services.AddDbContext<MissionControlContext>(optionsAction =>
-        {
-            var postgresHost = builder.Configuration["DB_HOST"];
-            var postgresPort = builder.Configuration["DB_PORT"];
-            var postgresDatabase = builder.Configuration["DB_DB"];
-            var postgresUser = builder.Configuration["DB_USER"];
-            var postgresPassword = builder.Configuration["DB_PASSWORD"];
-            optionsAction.UseNpgsql($"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};");
-            optionsAction.UseOpenIddict();
+                opt.AddDevelopmentEncryptionCertificate()
+                    .AddDevelopmentSigningCertificate();
+
+                opt.UseAspNetCore()
+                    .EnableRedirectionEndpointPassthrough();
+
+                opt.UseAspNetCore().DisableTransportSecurityRequirement();
+
+                opt.UseWebProviders()
+                    .AddGitHub(github => {
+                        github.SetClientId(builder.Configuration["GITHUB_CLIENT_ID"])
+                            .SetClientSecret(builder.Configuration["GITHUB_CLIENT_SECRET"])
+                            .SetRedirectUri("/authentication/api/webhook/oauth/github");
+                    });
+            });
+
+            options.AddCore(opt => {
+                opt.UseEntityFrameworkCore()
+                    .UseDbContext<MissionControlContext>();
+            });
         });
+
+        builder.Services.AddDbContext<MissionControlContext>(options =>
+        {
+            options.UseInMemoryDatabase("MissionControlContextDB");
+            options.UseOpenIddict();
+        });
+
+        //builder.Services.AddDbContext<MissionControlContext>(optionsAction =>
+        //{
+         //   var postgresHost = builder.Configuration["DB_HOST"];
+          //  var postgresPort = builder.Configuration["DB_PORT"];
+           // var postgresDatabase = builder.Configuration["DB_DB"];
+            //var postgresUser = builder.Configuration["DB_USER"];
+            //var postgresPassword = builder.Configuration["DB_PASSWORD"];
+            //optionsAction.UseNpgsql($"host={postgresHost};port={postgresPort};database={postgresDatabase};username={postgresUser};password={postgresPassword};");
+           // optionsAction.UseOpenIddict();
+        //});
 
         var sevenOptions = new SEVENOptions();
         builder.Configuration.Bind(sevenOptions);

@@ -3,6 +3,11 @@ using SEVEN.MissionControl.Server.Data.Contexts;
 using OpenIddict.Abstractions;
 using SEVEN.Core.Models;
 using SEVEN.MissionControl.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Client.AspNetCore;
+using OpenIddict.Client.WebIntegration;
 
 namespace SEVEN.MissionControl.Server.API.Endpoints;
 
@@ -11,6 +16,9 @@ public static class AuthenticationEndpoint
     public static RouteGroupBuilder AuthenticationGroup(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetProbeToken).WithName("GetProbeToken").WithOpenApi();
+        group.MapGet("/challenge/{redirectUrl}", HandleChallenge).WithName("HandleChallenge").WithOpenApi();
+        group.MapGet("/me/", GetMe).WithName("GetMe").WithOpenApi();
+        group.MapGet("/webhook/oauth/github/", HandleGithub).WithName("HandleGithub").WithOpenApi();
         return group;
     }
 
@@ -38,5 +46,101 @@ public static class AuthenticationEndpoint
 
         return Results.Ok(result);
     }
+
+    private static async Task<IResult>  HandleChallenge(string? redirectUrl, HttpContext context)
+    {
+        var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?> {
+            [OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = OpenIddictClientWebIntegrationConstants.Providers.GitHub,
+        }) {
+            RedirectUri = redirectUrl
+        };
+
+        context.Response.OnStarting(() => {
+            context.Response.StatusCode = 302;
+            return Task.CompletedTask;
+        });
+
+        await context.ChallengeAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme, authenticationProperties);
+        return Results.Ok();
+    }
+
+    private static IResult GetMe(HttpContext context, ClaimsPrincipal user)
+    {
+        var a = user.GetClaim(OpenIddictConstants.Claims.Subject);
+        return Results.Ok(new UserInfo{Info = a});
+    }
+
+    public class UserInfo
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Info { get; set; }
+        public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string AvatarUrl  { get; set; }
+        public string Roles { get; set; }
+    }
+    
+    
+    private static async Task<IResult> HandleGithub(HttpContext context) {
+        var result = await context.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+
+        if (result.Succeeded == false) {
+            return Results.Unauthorized();
+            
+        }
+
+        var username = result.Principal.FindFirst("login")?.Value;
+        var avatarUrl = result.Principal.FindFirst("avatar_url")?.Value;
+
+        if (username == null) {
+            return Results.Unauthorized();
+            
+        }
+
+        var info = new UserInfo
+        {
+            Username = username,
+            DisplayName = username,
+            AvatarUrl = avatarUrl ?? string.Empty
+        };
+        
+/*
+        var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == username, c);
+
+        if (user == null) {
+            user = new Entities.User {
+                Username = username,
+                DisplayName = username,
+                AvatarUrl = avatarUrl ?? string.Empty,
+                Roles = string.Join(",", new List<string> {
+                    UserRoles.Member
+                })
+            };
+
+            await _db.Users.AddAsync(user, c);
+            await _db.SaveChangesAsync(c);
+        }
+*/
+        var identity = new ClaimsIdentity(
+            authenticationType: OpenIddictClientWebIntegrationConstants.Providers.GitHub,
+            nameType: OpenIddictConstants.Claims.Name,
+            roleType: OpenIddictConstants.Claims.Role);
+
+        identity.AddClaim(OpenIddictConstants.Claims.Subject, info.Id.ToString() as string);
+        identity.AddClaim(OpenIddictConstants.Claims.Name, info.Username as string);
+        //identity.AddClaim(OpenIddictConstants.Claims.Role, user.Roles.ToString() as string);
+
+        var authenticationProperties = new AuthenticationProperties {
+            IsPersistent = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
+        };
+
+        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), authenticationProperties);
+        if (result.Properties.RedirectUri != null)  return Results.Redirect(result.Properties.RedirectUri);
+        
+        return Results.Unauthorized();
+    }
+
+    
 }
 
