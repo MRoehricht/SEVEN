@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Generators;
@@ -7,6 +8,28 @@ using SEVEN.MissionControl.Api.Features;
 using SEVEN.MissionControl.Api.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+const string sevenOrigins = "seven";
+var allowedOrigins = builder.Configuration["ALLOWED_ORIGINS"]?.Split(',') ?? Array.Empty<string>();
+builder.Services.AddCors(opt => {
+    opt.AddPolicy(name: sevenOrigins, policyBuilder => {
+        policyBuilder.WithOrigins(allowedOrigins)
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options => {
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedHost |
+        ForwardedHeaders.XForwardedProto;
+
+    options.ForwardLimit = 2;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,6 +55,10 @@ builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
 RoverGenerator.Initialize(builder.Services);
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
+app.UseCors(sevenOrigins);
+app.UseRouting();
 
 if (app.Environment.IsDevelopment())
 {
