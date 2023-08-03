@@ -39,4 +39,5 @@ jobs:
           context: .
           file: ./SEVEN.MissionControl.Server/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/seven-missioncontrol-server:latest, ${{ secrets.DOCKERHUB_USERNAME }}/seven-missioncontrol-server:${{ github.run_number }}
+          #tags: ${{ secrets.DOCKERHUB_USERNAME }}/seven-missioncontrol-server:latest, ${{ secrets.DOCKERHUB_USERNAME }}/seven-missioncontrol-server:${{ github.run_number }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/seven-missioncontrol-server:latest
