@@ -1,0 +1,26 @@
+version: '3.4'
+networks:
+  seven-network:
+    driver: bridge
+
+volumes:
+  seven-data:
+    driver: local
+
+services:
+  seven.missioncontrol.dashboard:
+    image: sevenmissioncontroldashboard
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ORIGIN=http://localhost:3000
+      - AUTH_SECRET=8212a37e513c35e771d27d7480975236
+      - AUTH_URL=http://localhost:3000
+      - GITHUB_ID=5f2793135203a90fe036
+      - GITHUB_SECRET=18c29354f0f2e6c270197aa99485bc4f1c9fd39c
+    restart: always
+    networks:
+      - seven-network
