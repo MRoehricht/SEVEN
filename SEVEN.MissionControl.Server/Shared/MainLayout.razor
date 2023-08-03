@@ -1,4 +1,12 @@
 @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Http
+@using SEVEN.Core.Models
+@using SEVEN.MissionControl.Server.Services.Interfaces
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authentication
+@inject IUserService UserService; 
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISnackbar Snackbar
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
 <MudDialogProvider/>
@@ -12,6 +20,21 @@
         <MudToggleIconButton @bind-Toggled="@_isDarkMode"
                              Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Default" Title="Off"
                              ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Default" ToggledTitle="On"/>       
+        @if (_user is not null)
+        {
+            <MudMenu>
+                <ActivatorContent>
+                    <MudAvatar Image="@_user.AvatarUrl" />
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem>Profile</MudMenuItem>
+                    <MudMenuItem>Theme</MudMenuItem>
+                    <MudMenuItem>Usage</MudMenuItem>
+                    <MudMenuItem OnClick="OnClick" >Sign Out</MudMenuItem>
+                </ChildContent>
+            </MudMenu>  
+        }
+        
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MRoehricht/SEVEN" Target="_blank"/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="@DrawerClipMode.Always" Breakpoint="@Breakpoint.Sm" OpenMiniOnHover="true" Elevation="1" Variant="@DrawerVariant.Mini">
@@ -37,10 +60,29 @@
     private readonly MudTheme _theme = new();
     private bool _isDarkMode;
     private bool _drawerOpen = true;
-
+    private SevenUser? _user;
+   
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await UserService.GetCurrentUser();
+        StateHasChanged();
+    }
+
+    private async Task Logout(TouchEventArgs args)
+    {
+    
+    }
+    
+    private async Task  OnClick(MouseEventArgs  args)
+    {
+         await HttpContextAccessor?.HttpContext?.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        StateHasChanged();
+        Snackbar.Add("OnClick Invoked");
     }
 
 }

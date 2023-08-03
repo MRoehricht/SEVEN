@@ -78,10 +78,12 @@ public class Program
         builder.Services.AddRazorPages();
         builder.Services.AddMudServices();
         builder.Services.AddServerSideBlazor();
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddTransient<IRoverTaskRepository, RoverTaskRepository>();
         builder.Services.AddTransient<IProbeRepository, ProbeRepository>();
         builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
         builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
 
         builder.Services.AddAuthorization();
