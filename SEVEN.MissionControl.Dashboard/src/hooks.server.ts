@@ -5,11 +5,11 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 export const authorization = (async ({ event, resolve }) => {
-	// Protect any routes under /test
-	if (event.url.pathname.startsWith('/test')) {
+	// Protect any routes except /login
+	if (event.url.pathname.startsWith('/') && event.url.pathname !== '/login') {
 		const session = await event.locals.getSession();
 		if (!session) {
-			throw redirect(303, '/auth');
+			throw redirect(303, '/login');
 		}
 	}
 
