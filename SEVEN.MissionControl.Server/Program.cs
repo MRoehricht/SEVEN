@@ -14,6 +14,9 @@ using SEVEN.MissionControl.Server.Services.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Net.Http.Headers;
 
 
 namespace SEVEN.MissionControl.Server;
@@ -40,7 +43,7 @@ public class Program
                     .AddGitHub(github => {
                         github.SetClientId(builder.Configuration["GITHUB_CLIENT_ID"])
                             .SetClientSecret(builder.Configuration["GITHUB_CLIENT_SECRET"])
-                            .SetRedirectUri("/authentication/api/webhook/oauth/github");
+                            .SetRedirectUri("/authentication/webhook/oauth/github");
                     });
             });
 
@@ -85,22 +88,48 @@ public class Program
 
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-        builder.Services.AddAuthentication().AddJwtBearer(opt =>
-        {
-            opt.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidIssuer = "SEVEN",
-                ValidAudience = "SEVEN",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sevenOptions.PROBE_SECRET)),
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-                NameClaimType = OpenIddictConstants.Claims.Subject,
-                RoleClaimType = OpenIddictConstants.Claims.Role
-            };
-        });
+        
+        builder.Services.AddAuthentication(o => {
+                o.DefaultScheme = "Jwt_Or_Cookie";
+                o.DefaultAuthenticateScheme = "Jwt_Or_Cookie";
+            }).AddCookie(opt => {
+                opt.Cookie.Name = "SEVEN";
+                opt.Cookie.HttpOnly = true;
+                opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                opt.Events.OnRedirectToLogin = context => {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                };
+                opt.Events.OnRedirectToAccessDenied = context => {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                };
+            })
+            .AddJwtBearer(opt => {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = "SEVEN",
+                    ValidAudience = "SEVEN",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sevenOptions.PROBE_SECRET)),
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    NameClaimType = OpenIddictConstants.Claims.Subject,
+                    RoleClaimType = OpenIddictConstants.Claims.Role
+                };
+            })
+            .AddPolicyScheme("Jwt_Or_Cookie", "Jwt_Or_Cookie", o => {
+                o.ForwardDefaultSelector = context => {
+                    if (context.Request.Headers.TryGetValue(HeaderNames.Authorization, out var authHeader) &&
+                        authHeader.FirstOrDefault()?.StartsWith("Bearer ") is true) {
+                        return JwtBearerDefaults.AuthenticationScheme;
+                    }
+
+                    return CookieAuthenticationDefaults.AuthenticationScheme;
+                };
+            });
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>

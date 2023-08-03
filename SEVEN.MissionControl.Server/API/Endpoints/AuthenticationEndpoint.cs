@@ -13,6 +13,8 @@ namespace SEVEN.MissionControl.Server.API.Endpoints;
 
 public static class AuthenticationEndpoint
 {
+    private static UserInfo _currentUser = null;
+    
     public static RouteGroupBuilder AuthenticationGroup(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetProbeToken).WithName("GetProbeToken").WithOpenApi();
@@ -62,11 +64,17 @@ public static class AuthenticationEndpoint
 
         await context.ChallengeAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme, authenticationProperties);
         return Results.Ok();
+        return Results.Redirect("/");
     }
 
     private static IResult GetMe(HttpContext context, ClaimsPrincipal user)
     {
         var a = user.GetClaim(OpenIddictConstants.Claims.Subject);
+
+        if (Guid.TryParse(a, out var userGuid) && _currentUser != null && _currentUser.Id == userGuid)
+        {
+            return Results.Ok(_currentUser);
+        }
         return Results.Ok(new UserInfo{Info = a});
     }
 
@@ -97,7 +105,7 @@ public static class AuthenticationEndpoint
             
         }
 
-        var info = new UserInfo
+        _currentUser = new UserInfo
         {
             Username = username,
             DisplayName = username,
@@ -126,8 +134,8 @@ public static class AuthenticationEndpoint
             nameType: OpenIddictConstants.Claims.Name,
             roleType: OpenIddictConstants.Claims.Role);
 
-        identity.AddClaim(OpenIddictConstants.Claims.Subject, info.Id.ToString() as string);
-        identity.AddClaim(OpenIddictConstants.Claims.Name, info.Username as string);
+        identity.AddClaim(OpenIddictConstants.Claims.Subject, _currentUser.Id.ToString() as string);
+        identity.AddClaim(OpenIddictConstants.Claims.Name, _currentUser.Username as string);
         //identity.AddClaim(OpenIddictConstants.Claims.Role, user.Roles.ToString() as string);
 
         var authenticationProperties = new AuthenticationProperties {
@@ -136,11 +144,14 @@ public static class AuthenticationEndpoint
         };
 
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), authenticationProperties);
-        if (result.Properties.RedirectUri != null)  return Results.Redirect(result.Properties.RedirectUri);
+        
+        if (result.Properties.RedirectUri != null)
+        {
+            context.Response.Redirect(result.Properties.RedirectUri);
+            return Results.Redirect(result.Properties.RedirectUri);
+        }
         
         return Results.Unauthorized();
     }
-
-    
 }
 
