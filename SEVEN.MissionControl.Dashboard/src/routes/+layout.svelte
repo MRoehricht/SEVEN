@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 
 	import 'carbon-components-svelte/css/all.css';
-
+	import { signIn, signOut } from '@auth/sveltekit/client';
 	import {
 		Header,
 		SideNav,
@@ -13,21 +13,36 @@
 		SideNavDivider,
 		SkipToContent,
 		Content,
-		Theme
+		Theme,
+		HeaderAction,
+		HeaderGlobalAction,
+		HeaderPanelDivider,
+		HeaderPanelLink,
+		HeaderPanelLinks,
+		HeaderUtilities,
+		HeaderActionLink
 	} from 'carbon-components-svelte';
-	import { Home, DocumentTasks, CloudDataOps, Diagram } from 'carbon-icons-svelte';
+	import {
+		Home,
+		DocumentTasks,
+		CloudDataOps,
+		Diagram,
+		SettingsAdjust,
+		UserAvatarFilledAlt,
+		Logout
+	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
 	import '@carbon/charts-svelte/styles.css';
 	import type { CarbonTheme } from 'carbon-components-svelte/types/Theme/Theme.svelte';
 
 	let isSideNavOpen = false;
+	let isAccountOpen = false;
 	let theme: CarbonTheme = 'g10';
 
 	let path: string;
 	let unsubscribe = page.subscribe((value) => {
 		path = value.route.id ?? '/';
-		console.log(path);
 	});
 
 	export function onDestroy() {
@@ -38,36 +53,49 @@
 <Theme bind:theme />
 
 <Header company="SEVEN" platformName="Sandberg Electric Vehicle Eden Network" bind:isSideNavOpen>
-	<!-- <svelte:fragment slot="skip-to-content">
-		<SkipToContent />
-	</svelte:fragment> -->
+	{#if $page.data.session}
+		<HeaderUtilities>
+			<HeaderAction
+				bind:isOpen={isAccountOpen}
+				icon={UserAvatarFilledAlt}
+				closeIcon={UserAvatarFilledAlt}
+			>
+				<HeaderPanelLinks>
+					<HeaderPanelDivider>Angemeldet als: {$page.data.session.user?.name}</HeaderPanelDivider>
+					<HeaderPanelLink on:click={() => signOut()}>Abmelden</HeaderPanelLink>
+				</HeaderPanelLinks>
+			</HeaderAction>
+		</HeaderUtilities>
+	{/if}
 </Header>
 
-<SideNav bind:isOpen={isSideNavOpen} rail>
-	<SideNavItems>
-		<SideNavLink icon={Home} text="Home" href="/" isSelected={path === '/'} />
-		<SideNavLink
-			icon={DocumentTasks}
-			text="Rovertasks"
-			href="/tasks"
-			isSelected={path?.endsWith('/tasks')}
-		/>
-		<SideNavLink
-			icon={CloudDataOps}
-			text="Messdaten"
-			href="/measurements"
-			isSelected={path?.endsWith('/measurements')}
-		/>
-		<SideNavDivider />
-		<SideNavMenu icon={Diagram} text="Diagramme">
-			<SideNavMenuItem
-				href="/diagramms/temperature"
-				text="Temperatur"
-				isSelected={path?.endsWith('/diagramms/temperature')}
+{#if $page.data.session}
+	<SideNav bind:isOpen={isSideNavOpen} rail>
+		<SideNavItems>
+			<SideNavLink icon={Home} text="Home" href="/" isSelected={path === '/'} />
+			<SideNavLink
+				icon={DocumentTasks}
+				text="Rovertasks"
+				href="/tasks"
+				isSelected={path?.endsWith('/tasks')}
 			/>
-		</SideNavMenu>
-	</SideNavItems>
-</SideNav>
+			<SideNavLink
+				icon={CloudDataOps}
+				text="Messdaten"
+				href="/measurements"
+				isSelected={path?.endsWith('/measurements')}
+			/>
+			<SideNavDivider />
+			<SideNavMenu icon={Diagram} text="Diagramme">
+				<SideNavMenuItem
+					href="/diagramms/temperature"
+					text="Temperatur"
+					isSelected={path?.endsWith('/diagramms/temperature')}
+				/>
+			</SideNavMenu>
+		</SideNavItems>
+	</SideNav>
+{/if}
 
 <Content>
 	<slot />
