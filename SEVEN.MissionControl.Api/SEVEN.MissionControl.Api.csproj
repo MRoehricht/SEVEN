@@ -17,4 +17,6 @@
       <ProjectReference Include="..\SEVEN.Core\SEVEN.Core.csproj" />
     </ItemGroup>
 
+
+
 </Project>

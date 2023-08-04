@@ -12,7 +12,6 @@ public static class MeasurementEndpoint
         group.MapPost("/filter", GetFilteredMeasurements).WithName("GetFilteredMeasurements").WithOpenApi();
         group.MapGet("/lastMeasurement", GetLastMeasurement).WithName("GetLastMeasurement").WithOpenApi();
         group.MapGet("/create/{message}", CreateMessages).WithName("CreateMessages").WithOpenApi();
-        // group.MapPost("/", PostMeasurement).WithName("PostMeasurement").RequireAuthorization().WithOpenApi();
         group.MapPost("/", PostMeasurement).WithName("PostMeasurement").WithOpenApi();
         return group;
     }

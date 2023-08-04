@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using SEVEN.MissionControl.Api.AuthenticationSchemes;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Generators;
 using SEVEN.MissionControl.Api.Data.Repositories;
@@ -31,11 +34,37 @@ builder.Services.Configure<ForwardedHeadersOptions>(options => {
     options.KnownProxies.Clear();
 });
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication(ApiKeyAuthenticationScheme.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationScheme>(ApiKeyAuthenticationScheme.SchemeName, null);
 
-builder.Services.AddDbContext<MissionControlContext>(optionsAction =>
-{
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("probe", policy => policy.RequireClaim("ProbeId"));
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(
+    options => {
+        options.AddSecurityDefinition(ApiKeyAuthenticationScheme.SchemeName, new OpenApiSecurityScheme {
+            Name = ApiKeyAuthenticationScheme.KeyHeaderName,
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement() {
+            {
+                new OpenApiSecurityScheme {
+                    Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = ApiKeyAuthenticationScheme.SchemeName
+                    },
+                    In = ParameterLocation.Header,
+                },
+                new List<string>()
+            }
+        });
+    });
+
+builder.Services.AddDbContext<MissionControlContext>(optionsAction => {
     var postgresHost = builder.Configuration["DB_HOST"];
     var postgresPort = builder.Configuration["DB_PORT"];
     var postgresDatabase = builder.Configuration["DB_DB"];
@@ -60,11 +89,13 @@ app.UseForwardedHeaders();
 app.UseCors(sevenOrigins);
 app.UseRouting();
 
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGroup("/rover").RoverGroup();
 app.MapGroup("/tasks").RoverTaskGroup();
