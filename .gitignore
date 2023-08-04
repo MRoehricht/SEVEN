@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /SEVEN.Arduino/arduino_secrets.h
 SEVEN.Pico/Probe/secrets.py
+.idea/
