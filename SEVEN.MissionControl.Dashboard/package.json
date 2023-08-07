@@ -12,6 +12,8 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
+		"@auth/core": "^0.10.0",
+		"@auth/sveltekit": "^0.3.6",
 		"@carbon/charts-svelte": "^1.11.15",
 		"@carbon/styles": "^1.34.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
@@ -31,12 +33,13 @@
 		"prettier-plugin-svelte": "^2.10.1",
 		"svelte": "^4.0.5",
 		"svelte-check": "^3.4.3",
+		"svelte-grid-extended": "^1.1.0",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
-		"vite": "^4.4.2",
-		"@auth/core": "^0.10.0",
-		"@auth/sveltekit": "^0.3.6",
-		"svelte-grid-extended": "^1.1.0"
+		"vite": "^4.4.2"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"clipboard-copy": "^4.0.1"
+	}
 }

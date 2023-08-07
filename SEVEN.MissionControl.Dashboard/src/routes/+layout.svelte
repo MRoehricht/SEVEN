@@ -27,6 +27,7 @@
 		DocumentTasks,
 		CloudDataOps,
 		Diagram,
+		Microservices_1,
 		SettingsAdjust,
 		UserAvatarFilledAlt,
 		Logout
@@ -78,6 +79,12 @@
 				text="Rovertasks"
 				href="/tasks"
 				isSelected={path?.endsWith('/tasks')}
+			/>
+			<SideNavLink
+				icon={Microservices_1}
+				text="Sonden"
+				href="/probes"
+				isSelected={path?.endsWith('/probes')}
 			/>
 			<SideNavLink
 				icon={CloudDataOps}
