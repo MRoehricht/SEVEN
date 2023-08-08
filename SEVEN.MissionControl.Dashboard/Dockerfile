@@ -2,7 +2,7 @@ FROM node:19-alpine AS build
 
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN NODE_ENV=development npm install
 RUN npm run build
 
 FROM node:19-alpine AS deploy-node
