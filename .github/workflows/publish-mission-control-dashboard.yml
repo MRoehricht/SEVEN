@@ -23,5 +23,5 @@ jobs:
           context: .
           github-token: '${{ secrets.PACKAGE_TOKEN }}'
           image-name: seven.missioncontrol-dashboard
-          dockerfile: ./SEVEN.MissionControl.Dashboard/Dockerfile
+          build-context: ./SEVEN.MissionControl.Dashboard
           
