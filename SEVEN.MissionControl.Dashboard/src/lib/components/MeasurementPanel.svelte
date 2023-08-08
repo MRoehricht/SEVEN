@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { Breadcrumb, BreadcrumbItem, Tile } from 'carbon-components-svelte';
-	import type { BreadCrumbNavigationItem } from './DashboardToolbar';
-	import type { Measurement } from '../../routes/measurements/+page.server';
+	import type { Measurement } from '../../routes/+page.server';
 	import { LineChart, ScaleTypes } from '@carbon/charts-svelte';
 	import { ToolbarControlTypes } from '@carbon/charts';
 
+	export let title: string;
 	export let measurements: Measurement[];
 </script>
 
-<Tile style="width: 100%; height: 100%">
+<Tile class="dashboard-tile">
 	<LineChart
 		data={measurements}
 		options={{
-			title: 'Probe1',
+			title,
 			height: '100%',
 			width: '100%',
 			data: { groupMapsTo: 'probeId' },
@@ -37,3 +37,10 @@
 		}}
 	/>
 </Tile>
+
+<style>
+	:global(.dashboard-tile) {
+		width: 100%;
+		height: 100%;
+	}
+</style>

@@ -2,16 +2,12 @@
 	import { page } from '$app/stores';
 
 	import 'carbon-components-svelte/css/all.css';
-	import { signIn, signOut } from '@auth/sveltekit/client';
+	import { signOut } from '@auth/sveltekit/client';
 	import {
 		Header,
 		SideNav,
 		SideNavItems,
-		SideNavMenu,
-		SideNavMenuItem,
 		SideNavLink,
-		SideNavDivider,
-		SkipToContent,
 		Content,
 		Theme,
 		HeaderAction,
@@ -23,14 +19,10 @@
 		HeaderActionLink
 	} from 'carbon-components-svelte';
 	import {
-		Home,
 		DocumentTasks,
-		CloudDataOps,
-		Diagram,
 		Microservices_1,
-		SettingsAdjust,
 		UserAvatarFilledAlt,
-		Logout
+		Dashboard
 	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
@@ -73,7 +65,7 @@
 {#if $page.data.session}
 	<SideNav bind:isOpen={isSideNavOpen} rail>
 		<SideNavItems>
-			<SideNavLink icon={Home} text="Home" href="/" isSelected={path === '/'} />
+			<SideNavLink icon={Dashboard} text="Dashboard" href="/" isSelected={path === '/'} />
 			<SideNavLink
 				icon={DocumentTasks}
 				text="Rovertasks"
@@ -86,20 +78,6 @@
 				href="/probes"
 				isSelected={path?.endsWith('/probes')}
 			/>
-			<SideNavLink
-				icon={CloudDataOps}
-				text="Messdaten"
-				href="/measurements"
-				isSelected={path?.endsWith('/measurements')}
-			/>
-			<SideNavDivider />
-			<SideNavMenu icon={Diagram} text="Diagramme">
-				<SideNavMenuItem
-					href="/diagramms/temperature"
-					text="Temperatur"
-					isSelected={path?.endsWith('/diagramms/temperature')}
-				/>
-			</SideNavMenu>
 		</SideNavItems>
 	</SideNav>
 {/if}
