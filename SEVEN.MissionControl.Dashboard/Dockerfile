@@ -5,7 +5,7 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-FROM node:20-alpine AS deploy-node
+FROM node:19-alpine AS deploy-node
 
 EXPOSE 3000
 ENV NODE_ENV=production
