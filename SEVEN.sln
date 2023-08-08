@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEVEN.Relay.API", "SEVEN.Re
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEVEN.MissionControl.Api", "SEVEN.MissionControl.Api\SEVEN.MissionControl.Api.csproj", "{085DC1CC-5A74-473B-AABF-1F56F87DAB73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{321A8445-E44D-46A8-A93E-51A1C4D3B3E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{085DC1CC-5A74-473B-AABF-1F56F87DAB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085DC1CC-5A74-473B-AABF-1F56F87DAB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085DC1CC-5A74-473B-AABF-1F56F87DAB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085DC1CC-5A74-473B-AABF-1F56F87DAB73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{45B3D189-FD8F-4FDA-9473-D2D335318723} = {B9B9DD37-55CB-4346-95C0-DE6972C74802}
 		{453D4AC4-F2E2-47FC-9E5D-58354F5E6135} = {340100A6-225C-465D-B941-8E13F517233C}
 		{FF8CF29F-D020-41DC-AC14-8B349AA3884A} = {FDDB3505-B16B-4B2A-B3C9-2E47E9D1D1DF}
+		{085DC1CC-5A74-473B-AABF-1F56F87DAB73} = {340100A6-225C-465D-B941-8E13F517233C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F25484B-0F7F-4D40-AF16-60960452FD91}

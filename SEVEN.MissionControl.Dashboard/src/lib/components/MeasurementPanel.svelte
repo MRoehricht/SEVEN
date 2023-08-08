@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Breadcrumb, BreadcrumbItem, Tile } from 'carbon-components-svelte';
 	import type { BreadCrumbNavigationItem } from './DashboardToolbar';
-	import type { Measurement } from '../../routes/measurements/+page';
+	import type { Measurement } from '../../routes/measurements/+page.server';
 	import { LineChart, ScaleTypes } from '@carbon/charts-svelte';
 	import { ToolbarControlTypes } from '@carbon/charts';
 

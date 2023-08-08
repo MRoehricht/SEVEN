@@ -21,6 +21,7 @@ services:
       - AUTH_URL=http://localhost:3000
       - GITHUB_ID=5f2793135203a90fe036
       - GITHUB_SECRET=18c29354f0f2e6c270197aa99485bc4f1c9fd39c
+      - API_URL=http://localhost:5034
     restart: always
     networks:
       - seven-network
