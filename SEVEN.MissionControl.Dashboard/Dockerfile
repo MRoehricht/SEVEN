@@ -1,11 +1,11 @@
-FROM node:19-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 COPY . .
 RUN NODE_ENV=development npm install
 RUN npm run build
 
-FROM node:19-alpine AS deploy-node
+FROM node:20-alpine AS deploy-node
 
 EXPOSE 3000
 ENV NODE_ENV=production
