@@ -5,23 +5,55 @@ networks:
 
 volumes:
   seven-data:
-    driver: local
 
 services:
-  seven.missioncontrol.dashboard:
-    image: sevenmissioncontroldashboard
+  seven-missioncontrol-dashboard:
+    image: seven-dashboard:latest
     ports:
       - 3000:3000
-    build:
-      context: .
-      dockerfile: Dockerfile
     environment:
-      - ORIGIN=http://localhost:3000
+      - ORIGIN=http://seven-missioncontrol-dashboard:3000
       - AUTH_SECRET=8212a37e513c35e771d27d7480975236
-      - AUTH_URL=http://localhost:3000
+      - AUTH_URL=http://seven-missioncontrol-dashboard:3000
       - GITHUB_ID=5f2793135203a90fe036
       - GITHUB_SECRET=18c29354f0f2e6c270197aa99485bc4f1c9fd39c
-      - API_URL=http://localhost:5034
+      - API_URL=http://seven-missioncontrol-api:5009
     restart: always
     networks:
       - seven-network
+  seven-missioncontrol-api:
+    image: seven-api:latest
+    ports:
+      - 5009:80
+    environment:
+      - DB_HOST=seven-postgres
+      - DB_PORT=5432
+      - DB_DB=seven
+      - DB_USER=seven
+      - DB_PASSWORD=seven
+      - ALLOWED_ORIGINS=http://seven-missioncontrol-dashboard:3000
+      - API_KEY=G9ZlCxw4dAwIH1a1K4uQLcZnsk4txEvr
+    restart: always
+    networks:
+      - seven-network
+    depends_on:
+      seven-postgres:
+        condition: service_healthy
+  seven-postgres:
+    image: postgres:latest
+    volumes:
+      - seven-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_USER=seven
+      - POSTGRES_PASSWORD=seven
+      - POSTGRES_DB=seven
+    networks:
+      - seven-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d seven']
+      interval: 5s
+      timeout: 5s
+      retries: 5

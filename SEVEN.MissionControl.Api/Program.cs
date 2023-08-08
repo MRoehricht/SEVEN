@@ -89,10 +89,8 @@ app.UseForwardedHeaders();
 app.UseCors(sevenOrigins);
 app.UseRouting();
 
-if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,9 +1,9 @@
-import { API_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ fetch, params }) {
 	async function fetchData(): Promise<Measurement[]> {
-		const response = await fetch(`${API_URL}/measurement`);
+		const response = await fetch(`${env.API_URL}/measurement`);
 		return (await response.json()) as Measurement[];
 	}
 
