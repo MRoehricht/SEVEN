@@ -1,11 +1,13 @@
 name: CI Build and publish Dashboard
 on:
   push:
-    paths:
-      - 'SEVEN.MissionControl.Dashboard/**'        
+    branches: [ main ]         
 jobs:
   docker:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_ID: Replace
+      GITHUB_SECRET: Replace
     steps:
       -
         name: Checkout
