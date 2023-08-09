@@ -1,8 +1,7 @@
 name: CI Build and publish Dashboard
 on:
   push:
-    paths:
-      - 'SEVEN.MissionControl.Dashboard/**'        
+    branches: [ main ]         
 jobs:
   docker:
     runs-on: ubuntu-latest
