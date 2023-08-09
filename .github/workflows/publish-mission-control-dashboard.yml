@@ -6,6 +6,9 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_ID: Replace
+      GITHUB_SECRET: Replace
     steps:
       -
         name: Checkout
