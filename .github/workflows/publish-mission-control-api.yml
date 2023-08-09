@@ -16,4 +16,4 @@ jobs:
         with:          
           github-token: '${{ secrets.PACKAGE_TOKEN }}'
           image-name: seven.missioncontrol-api
-          build-context: ./SEVEN.MissionControl.Api
+          dockerfile: ./SEVEN.MissionControl.Api/Dockerfile
