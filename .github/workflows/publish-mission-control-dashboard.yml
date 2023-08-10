@@ -10,6 +10,10 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3    
+      - run: git config --global user.name '${{ secrets.USERNAME }}'
+      - run: git config --global user.email '${{ secrets.EMAIL }}'
+      - run: npm version patch -m "[MAIN] %s"
+      - run: git push
       - 
         name: Build and publish "latest" Docker image
         uses: VaultVulp/gp-docker-action@1.6.0
