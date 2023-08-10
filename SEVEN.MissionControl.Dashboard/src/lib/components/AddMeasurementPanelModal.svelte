@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AddMeasurementPanel } from '$lib/types';
-	import { Modal, TextInput } from 'carbon-components-svelte';
+	import { Modal, TextInput, ComboBox } from 'carbon-components-svelte';	
 
 	let title = '';
 	let probeId = '';
@@ -39,4 +39,19 @@
 		placeholder="Probe-Typ..."
 		bind:value={measurementType}
 	/>
+	<ComboBox	
+	titleText="Contact"
+	placeholder="Select contact method"
+	items={[
+	  { id: 0, text: "Temperature" },
+	  { id: 1, text: "Percent" },
+	  { id: 2, text: "StateOfCharge" },
+	  { id: 4, text: "Humidity" },
+	  { id: 8, text: "UvRadiation" },
+	  { id: 16, text: "LightIntensity" },
+	  { id: 32, text: "SwitchingState" },
+	  { id: 64, text: "SoilMoisture" },  
+	]}
+  />
+
 </Modal>
