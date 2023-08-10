@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-
+	import { version } from '$app/environment';
 	import 'carbon-components-svelte/css/all.css';
 	import { signOut } from '@auth/sveltekit/client';
 	import {
@@ -45,7 +45,7 @@
 
 <Theme bind:theme />
 
-<Header company="SEVEN" platformName="Sandberg Electric Vehicle Eden Network" bind:isSideNavOpen>
+<Header company="SEVEN" platformName="Sandberg Electric Vehicle Eden Network {version}" bind:isSideNavOpen>
 	{#if $page.data.session}
 		<HeaderUtilities>
 			<HeaderAction
