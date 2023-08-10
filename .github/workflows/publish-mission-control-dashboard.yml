@@ -12,6 +12,7 @@ jobs:
         uses: actions/checkout@v3    
       - run: git config --global user.name '${{ secrets.USERNAME }}'
       - run: git config --global user.email '${{ secrets.EMAIL }}'
+      - run: cd ./SEVEN.MissionControl.Dashboard
       - run: npm version patch -m "[MAIN] %s"
       - run: git push
       - 
