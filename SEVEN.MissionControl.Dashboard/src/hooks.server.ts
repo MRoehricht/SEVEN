@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
-import { GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
@@ -26,7 +26,7 @@ export const authorization = (async ({ event, resolve }) => {
 // And returning a handle which gets passed to the next function
 export const handle: Handle = sequence(
 	SvelteKitAuth({
-		providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+		providers: [GitHub({ clientId: env.GITHUB_ID, clientSecret: env.GITHUB_SECRET })]
 	}),
 	authorization
 );
