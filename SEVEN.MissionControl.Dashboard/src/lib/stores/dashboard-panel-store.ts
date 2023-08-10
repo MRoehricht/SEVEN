@@ -7,6 +7,6 @@ export type PanelProps = {
 	id: string;
 	title: string;
 	probeId: string;
-	probeType: number;
+	measurementType: number;
 	gridItem: GridItemProps;
 };

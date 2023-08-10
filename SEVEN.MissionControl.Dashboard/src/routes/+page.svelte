@@ -2,11 +2,7 @@
 	import 'carbon-components-svelte/css/all.css';
 	import '@carbon/styles/css/styles.css';
 	import '@carbon/charts-svelte/styles.css';
-	import Grid, {
-		GridItem,
-		type GridController,
-		type LayoutChangeDetail
-	} from 'svelte-grid-extended';
+	import Grid, { GridItem, type GridController } from 'svelte-grid-extended';
 	import DashboardToolbar from '$lib/components/DashboardToolbar.svelte';
 	import MeasurementPanel from '$lib/components/MeasurementPanel.svelte';
 	import {
@@ -18,20 +14,16 @@
 	} from 'carbon-components-svelte';
 	import { Settings, Unlocked, Locked } from 'carbon-icons-svelte';
 	import { panels } from '$lib/stores/dashboard-panel-store';
+	import AddMeasurementPanelModal from '$lib/components/AddMeasurementPanelModal.svelte';
+	import type { AddMeasurementPanel } from '$lib/types';
 
+	let showAddPanelModal = false;
 	let isLocked = true;
-	let addPanelOpen = false;
-	let addPanelName = '';
-	let addProbeId = '';
-	let addProbeType = 0;
 	const itemSize = { height: 100 };
-
-	// @type {import('./$types').PageData}
-	//export let data;
 
 	let gridController: GridController;
 
-	function addNewItem(title: string) {
+	function addNewPanel(panel: AddMeasurementPanel) {
 		const w = 2;
 		const h = 3;
 		const newPosition = gridController.getFirstAvailablePosition(w, h);
@@ -41,9 +33,9 @@
 					...$panels,
 					{
 						id: $panels.length + 1 + '',
-						title,
-						probeId: addProbeId,
-						probeType: addProbeType,
+						title: panel.title,
+						probeId: panel.probeId,
+						measurementType: panel.measurementType,
 						gridItem: { x: newPosition.x, y: newPosition.y, w, h, min: { w, h } }
 					}
 			  ]
@@ -69,34 +61,7 @@
 	}
 </script>
 
-<Modal
-	bind:open={addPanelOpen}
-	modalHeading="Neues Panel"
-	primaryButtonText="Panel erstellen"
-	secondaryButtonText="Abbrechen"
-	on:click:button--secondary={() => (addPanelOpen = false)}
-	on:open
-	on:close
-	on:submit={() => {
-		addNewItem(addPanelName);
-		addPanelOpen = false;
-		addPanelName = '';
-	}}
->
-	<TextInput
-		id="panel-name"
-		labelText="Panelname"
-		placeholder="Panelname..."
-		bind:value={addPanelName}
-	/>
-	<TextInput id="probe-id" labelText="Probe" placeholder="Probe..." bind:value={addProbeId} />
-	<TextInput
-		id="probe-type"
-		labelText="Probe-Typ"
-		placeholder="Probe-Typ..."
-		bind:value={addProbeType}
-	/>
-</Modal>
+<AddMeasurementPanelModal bind:isOpen={showAddPanelModal} onSubmitClicked={addNewPanel} />
 
 <DashboardToolbar title="Mein Dashboard" crumbs={[{ label: 'Dashboard', path: '/' }]}>
 	{#if isLocked}
@@ -120,7 +85,7 @@
 		<OverflowMenuItem
 			text="Neues Panel"
 			on:click={() => {
-				addPanelOpen = true;
+				showAddPanelModal = true;
 			}}
 		/>
 	</OverflowMenu>
@@ -128,7 +93,7 @@
 
 <div class="full-height">
 	<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
-		{#each $panels as { id, title, probeId, probeType, gridItem } (id)}
+		{#each $panels as { id, title, probeId, measurementType, gridItem } (id)}
 			{#key id}
 				<GridItem
 					{id}
@@ -138,7 +103,7 @@
 					bind:h={gridItem.h}
 					bind:min={gridItem.min}
 				>
-					<MeasurementPanel {title} {probeId} {probeType} />
+					<MeasurementPanel {title} {probeId} {measurementType} />
 				</GridItem>
 			{/key}
 		{/each}

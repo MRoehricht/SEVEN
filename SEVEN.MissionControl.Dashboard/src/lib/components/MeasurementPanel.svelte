@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { Breadcrumb, BreadcrumbItem, Tile } from 'carbon-components-svelte';
-	import type { Measurement } from '../../routes/+page.server';
+	import type { Measurement } from '$lib/types';
 	import { LineChart, ScaleTypes } from '@carbon/charts-svelte';
 	import { ToolbarControlTypes } from '@carbon/charts';
 	import { env } from '$env/dynamic/public';
 
 	export let title: string;
 	export let probeId: string;
-	export let probeType: string;
-
-	console.log(probeType);
+	export let measurementType: number;
 
 	async function fetchMeasurements(): Promise<Measurement[]> {
 		const options: RequestInit = {
@@ -17,7 +15,7 @@
 			headers: { 'Content-Type': 'application/json', accept: '*/*' },
 			body: JSON.stringify({
 				probeId: probeId,
-				type: Number(probeType)
+				type: Number(measurementType)
 			})
 		};
 		return await fetch(`${env.PUBLIC_API_URL}/measurement/filter`, options).then((res) =>
