@@ -32,7 +32,6 @@
 	let isSideNavOpen = false;
 	let isAccountOpen = false;
 	let theme: CarbonTheme = 'g10';
-
 	let path: string;
 	let unsubscribe = page.subscribe((value) => {
 		path = value.route.id ?? '/';
