@@ -22,10 +22,12 @@
 	let isLocked = true;
 	let addPanelOpen = false;
 	let addPanelName = '';
+	let addProbeId = '';
+	let addProbeType = 0;
 	const itemSize = { height: 100 };
 
 	// @type {import('./$types').PageData}
-	export let data;
+	//export let data;
 
 	let gridController: GridController;
 
@@ -40,10 +42,14 @@
 					{
 						id: $panels.length + 1 + '',
 						title,
+						probeId: addProbeId,
+						probeType: addProbeType,
 						gridItem: { x: newPosition.x, y: newPosition.y, w, h, min: { w, h } }
 					}
 			  ]
 			: $panels;
+
+		localStorage.setItem('dashboard-panels', JSON.stringify($panels));
 	}
 
 	if (typeof window !== 'undefined') {
@@ -83,6 +89,13 @@
 		placeholder="Panelname..."
 		bind:value={addPanelName}
 	/>
+	<TextInput id="probe-id" labelText="Probe" placeholder="Probe..." bind:value={addProbeId} />
+	<TextInput
+		id="probe-type"
+		labelText="Probe-Typ"
+		placeholder="Probe-Typ..."
+		bind:value={addProbeType}
+	/>
 </Modal>
 
 <DashboardToolbar title="Mein Dashboard" crumbs={[{ label: 'Dashboard', path: '/' }]}>
@@ -115,7 +128,7 @@
 
 <div class="full-height">
 	<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
-		{#each $panels as { id, title, gridItem } (id)}
+		{#each $panels as { id, title, probeId, probeType, gridItem } (id)}
 			{#key id}
 				<GridItem
 					{id}
@@ -125,7 +138,7 @@
 					bind:h={gridItem.h}
 					bind:min={gridItem.min}
 				>
-					<MeasurementPanel {title} measurements={data.measurements} />
+					<MeasurementPanel {title} {probeId} {probeType} />
 				</GridItem>
 			{/key}
 		{/each}

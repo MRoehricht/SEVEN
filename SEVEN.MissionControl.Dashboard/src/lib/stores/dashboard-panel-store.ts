@@ -6,5 +6,7 @@ export const panels = writable<PanelProps[]>([]);
 export type PanelProps = {
 	id: string;
 	title: string;
+	probeId: string;
+	probeType: number;
 	gridItem: GridItemProps;
 };
