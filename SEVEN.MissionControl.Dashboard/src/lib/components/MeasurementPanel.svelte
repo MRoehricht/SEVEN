@@ -17,9 +17,6 @@
 			headers: { 'Content-Type': 'application/json', accept: '*/*' },
 			body: JSON.stringify({
 				probeId: probeId,
-				year: 0,
-				month: 0,
-				day: 0,
 				type: Number(probeType)
 			})
 		};
