@@ -25,7 +25,9 @@
 </script>
 
 {#await fetchMeasurements()}
-<Tile class="dashboard-tile">
+ Loading ...
+<!--
+ <Tile class="dashboard-tile">
 	<LineChart
 		data={[]} as const,
 		options={{
@@ -36,6 +38,7 @@
 		}}
 	/>
 </Tile>
+-->
 {:then measurements}
 	<Tile class="dashboard-tile">
 		<LineChart
@@ -75,4 +78,4 @@
 		width: 100%;
 		height: 100%;
 	}
-</style> 
+</style>
