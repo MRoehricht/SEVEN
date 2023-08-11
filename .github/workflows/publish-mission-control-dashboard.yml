@@ -2,7 +2,7 @@ name: CI Build and publish Dashboard
 on:
   push:
     paths:
-      - 'SEVEN.MissionControl.Dashboard/**'        
+      - 'SEVEN.MissionControl.Dashboard/src/**'        
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -14,7 +14,9 @@ jobs:
       - run: git config --global user.email '${{ secrets.EMAIL }}'     
       - run: npm version patch -m "[MAIN] %s"
         working-directory: ./SEVEN.MissionControl.Dashboard
-      - run: git push
+      - run: git add "package.json"
+      - run: git commit -m "Update Dashboard Version"
+      - run: git push origin
       - 
         name: Build and publish "latest" Docker image
         uses: VaultVulp/gp-docker-action@1.6.0
