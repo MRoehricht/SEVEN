@@ -25,7 +25,17 @@
 </script>
 
 {#await fetchMeasurements()}
-	<p>Loading</p>
+<Tile class="dashboard-tile">
+	<LineChart
+		data={[]} as const,
+		options={{
+			title,
+			height: '100%',
+			width: '100%',
+			data: {loading: true},		
+		}}
+	/>
+</Tile>
 {:then measurements}
 	<Tile class="dashboard-tile">
 		<LineChart
@@ -34,7 +44,7 @@
 				title,
 				height: '100%',
 				width: '100%',
-				data: { groupMapsTo: 'probeId' },
+				data: { groupMapsTo: 'probeId'},
 				curve: 'curveMonotoneX',
 				points: { radius: 0 },
 				axes: {

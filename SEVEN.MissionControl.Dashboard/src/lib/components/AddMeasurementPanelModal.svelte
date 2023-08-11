@@ -32,11 +32,11 @@
 	}}
 >
 	<TextInput id="panel-name" labelText="Panelname" placeholder="Panelname..." bind:value={title} />
-	<TextInput id="probe-id" labelText="Probe" placeholder="Probe..." bind:value={probeId} />
-	<TextInput
-		id="probe-type"
-		labelText="Probe-Typ"
-		placeholder="Probe-Typ..."
+	<TextInput id="probe-id" labelText="Probe-Id" placeholder="Probe-Id..." bind:value={probeId} />
+	<TextInput 
+		id="measurement-type"
+		labelText="Measurement-Typ"
+		placeholder="Measurement-Typ..."
 		bind:value={measurementType}
 	/>
 	<ComboBox	
