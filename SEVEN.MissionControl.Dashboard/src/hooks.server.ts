@@ -1,5 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
+
 import { env } from '$env/dynamic/private';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -30,3 +31,12 @@ export const handle: Handle = sequence(
 	}),
 	authorization
 );
+
+/*
+import AzureADB2C from "@auth/core/providers/azure-ad-b2c";
+const request = new Request("https://example.com");
+const response = await AuthHandler(request, {
+  // optionally, you can pass `tenantId` and `primaryUserFlow` instead of `issuer`
+  providers: [AzureADB2C({ clientId: "", clientSecret: "", issuer: "" })],
+});
+*/

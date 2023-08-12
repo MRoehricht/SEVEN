@@ -26,6 +26,8 @@ public class RoverGenerator
             var probeOne = new Probe
             {
                 Id = Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"),
+                ApiKey = "asotoiwes123afq234€werwik230g",
+                LastContact = null,
                 Name = "Probe1",
                 MeasurementsType = MeasurementType.Temperature | MeasurementType.Humidity,
                 SendingIntervalMinutes = 5

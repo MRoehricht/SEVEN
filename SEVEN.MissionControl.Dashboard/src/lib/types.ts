@@ -12,3 +12,11 @@ export type AddMeasurementPanel = {
 	probeId: string;
 	measurementType: number;
 };
+
+export type Probe = {
+	id: string;
+	name: string;	
+	measurementsType: number;
+	sendingIntervalMinutes: number;
+	lastContact: string;
+};

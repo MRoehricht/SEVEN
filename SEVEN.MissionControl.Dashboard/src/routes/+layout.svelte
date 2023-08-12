@@ -64,12 +64,12 @@
 	<SideNav bind:isOpen={isSideNavOpen} rail>
 		<SideNavItems>
 			<SideNavLink icon={Dashboard} text="Dashboard" href="/" isSelected={path === '/'} />
-			<SideNavLink
+			<!--<SideNavLink
 				icon={DocumentTasks}
 				text="Rovertasks"
 				href="/tasks"
 				isSelected={path?.endsWith('/tasks')}
-			/>
+			/>-->
 			<SideNavLink
 				icon={Microservices_1}
 				text="Sonden"

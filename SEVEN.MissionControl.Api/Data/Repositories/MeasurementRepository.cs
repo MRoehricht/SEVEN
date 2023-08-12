@@ -2,16 +2,21 @@
 using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
+using SEVEN.MissionControl.Api.Models.EventSystem;
+using SEVEN.MissionControl.Api.Services;
+using SEVEN.MissionControl.Api.Services.EventSystem;
 
 namespace SEVEN.MissionControl.Api.Data.Repositories;
 
 public class MeasurementRepository : IMeasurementRepository
 {
     private readonly MissionControlContext _context;
+    private readonly EventPublisher _eventPublisher;
 
-    public MeasurementRepository(MissionControlContext context)
+    public MeasurementRepository(MissionControlContext context, EventPublisher eventPublisher)
     {
         _context = context;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<IEnumerable<Measurement>> GetMeasurements()
@@ -22,7 +27,7 @@ public class MeasurementRepository : IMeasurementRepository
     public async Task<Measurement?> GetLastMeasurement(Guid probeId)
     {
         var measurements = await GetMeasurements();
-        var measurement = measurements.Where(_ => _.ProbeId == probeId).OrderByDescending(_ => _.Time)?.FirstOrDefault();
+        var measurement = measurements.Where(_ => _.ProbeId == probeId).MaxBy(_ => _.Time);
         return measurement;
     }
 
@@ -36,7 +41,9 @@ public class MeasurementRepository : IMeasurementRepository
         measurement.Time = DateTime.UtcNow;
 
         await _context.Measurements.AddAsync(measurement);
+        probe.LastContact = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        _eventPublisher.Raise(new ProbeChangedEventMessage{Value = measurement.Value, TargetId = probe.Id});
         return measurement;
     }
 }

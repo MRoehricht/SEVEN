@@ -1,4 +1,6 @@
-﻿using SEVEN.Core.Models;
+﻿using System.Security.Claims;
+using OpenIddict.Abstractions;
+using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 using SEVEN.MissionControl.Api.Services;
 
@@ -28,7 +30,7 @@ public static class MeasurementEndpoint
         return Results.Ok(measurement);
     }
 
-    private static async Task<IResult> GetFilteredMeasurements(MeasurementFilter filter, IMeasurementRepository repository)
+    private static async Task<IResult> GetFilteredMeasurements(MeasurementFilter? filter, IMeasurementRepository repository)
     {
         var measurements = await repository.GetMeasurements();
         if (filter == null) return Results.Ok(measurements);

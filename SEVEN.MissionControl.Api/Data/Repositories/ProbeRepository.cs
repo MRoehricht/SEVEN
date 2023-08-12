@@ -1,4 +1,6 @@
-﻿using SEVEN.Core.Models;
+﻿using System.Security.Cryptography;
+using System.Text;
+using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 
@@ -16,6 +18,7 @@ public class ProbeRepository : IProbeRepository
     public async Task<Probe> CreateProbe(Probe probe)
     {
         probe.Id = Guid.NewGuid();
+        probe.ApiKey = GetApiKey(40);
         await _context.AddAsync(probe);
         await _context.SaveChangesAsync();
         return probe;
@@ -33,7 +36,7 @@ public class ProbeRepository : IProbeRepository
         }
         else
         {
-            probe = null;
+            return null;
         }
 
         return probe;
@@ -50,5 +53,21 @@ public class ProbeRepository : IProbeRepository
         }
 
         return false;
+    }
+    
+    private static string GetApiKey(int size)
+    {
+        var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+        var data = new byte[size];
+        using (var crypto = RandomNumberGenerator.Create())
+        {
+            crypto.GetBytes(data);
+        }
+        var result = new StringBuilder(size);
+        foreach (var b in data)
+        {
+            result.Append(chars[b % (chars.Length)]);
+        }
+        return result.ToString();
     }
 }

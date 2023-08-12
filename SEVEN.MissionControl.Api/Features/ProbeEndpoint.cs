@@ -1,4 +1,5 @@
-﻿using SEVEN.Core.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 
@@ -8,12 +9,20 @@ public static class ProbeEndpoint
 {
     public static RouteGroupBuilder ProbeGroup(this RouteGroupBuilder group)
     {
+        group.MapGet("/", GetProbes).WithName("GetProbes").WithOpenApi();
         group.MapGet("/{id}", GetProbe).WithName("GetProbe").WithOpenApi();
         group.MapPost("/", CreateProbe).WithName("CreateProbe").WithOpenApi();
         group.MapPut("/", UpdateProbe).WithName("UpdateProbe").WithOpenApi();
         group.MapDelete("/", RemoveProbe).WithName("RemoveProbe").WithOpenApi();
 
         return group;
+    }
+
+
+    private static async Task<IResult> GetProbes(MissionControlContext context)
+    {
+        var probes = await context.Probes.ToListAsync();
+        return Results.Ok(probes);
     }
 
     private static async Task<IResult> GetProbe(Guid id, HttpContext httpContext, MissionControlContext context)
