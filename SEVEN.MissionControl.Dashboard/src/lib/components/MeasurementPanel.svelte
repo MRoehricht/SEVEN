@@ -38,7 +38,7 @@
 			title,
 			height: '100%',
 			width: '100%',
-			data: { groupMapsTo: 'probeId', loading: isLoading },
+			data: { groupMapsTo: 'measurementType', loading: isLoading },
 			curve: 'curveMonotoneX',
 			points: { radius: 0 },
 			axes: {
