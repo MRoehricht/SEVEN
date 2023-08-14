@@ -89,10 +89,17 @@ builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
 builder.Services.AddSingleton<EventPublisher>(new EventPublisher());
 builder.Services.AddSingleton<ServerSendEventsService>(provider => new ServerSendEventsService(provider.GetService<EventPublisher>(), provider.GetService<ILogger<ServerSendEventsService>>()));
 
-RoverGenerator.Initialize(builder.Services);
-EventGenerator.Initialize(builder.Services);
+//EventGenerator.Initialize(builder.Services);
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    //dotnet ef migrations add ...-Script
+    var missionControlContext = scope.ServiceProvider.GetRequiredService<MissionControlContext>();
+    missionControlContext.Database.Migrate();
+    RoverGenerator.Initialize(missionControlContext);
+}
 
 app.UseForwardedHeaders();
 app.UseCors(sevenOrigins);
