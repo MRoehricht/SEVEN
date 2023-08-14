@@ -87,3 +87,14 @@
 <Content>
 	<slot />
 </Content>
+
+<style>
+	/* Hack bezüglich https://github.com/carbon-design-system/carbon-components-svelte/issues/1619 */
+	:global(.bx--modal-content) {
+		overflow: visible;
+	}
+
+	:global(.bx--modal.is-visible .bx--modal-container) {
+		overflow: visible;
+	}
+</style>

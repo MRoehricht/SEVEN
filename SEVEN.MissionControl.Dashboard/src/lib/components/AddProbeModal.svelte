@@ -107,19 +107,11 @@
 		selectedProbe = null;
 	}}
 >
-	<div style="height: 300px;">
-		<TextInput
-			id="probe-name"
-			labelText="Sondenname"
-			placeholder="Sondenname..."
-			bind:value={name}
-		/>
-		<MultiSelect
-			size="sm"
-			titleText="Messwerte"
-			label={multiSelectLabel}
-			bind:selectedIds={multiselectIds}
-			{items}
-		/>
-	</div>
+	<TextInput id="probe-name" labelText="Sondenname" placeholder="Sondenname..." bind:value={name} />
+	<MultiSelect
+		titleText="Messwerte"
+		label={multiSelectLabel}
+		bind:selectedIds={multiselectIds}
+		{items}
+	/>
 </Modal>
