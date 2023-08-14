@@ -16,51 +16,54 @@
 	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
 	import { onMount } from 'svelte';
 
+	let isLoading = true;
+	let fetchError = '';
+	let probes: Probe[] = [];
+	let selectedProbe: Probe | null = null;
+
 	let showAddPanelModal = false;
-	let selectedProbe: Probe;
-	var selectedEditProbe: Probe | null = null;
-	let openDelete = false;
+	let showDeleteModal = false;
+
 	const headers = [
+		{ key: 'id', value: 'ID' },
 		{ key: 'name', value: 'Name' },
 		{ key: 'lastContact', value: 'letzter kontakt' },
 		{ key: 'overflow', empty: true }
 	];
 
 	onMount(() => {
-		refreshData();
+		fetchProbes();
 	});
 
-	function refreshData() {
-		openDelete = false;
-		selectedEditProbe = null;
-		fetchProbes();
-	}
+	async function fetchProbes() {
+		isLoading = true;
 
-	async function fetchProbes(): Promise<Probe[]> {
 		const options: RequestInit = {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json', accept: '*/*' }
 		};
-		return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
+		probes = await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
+
+		isLoading = false;
 	}
 
 	async function deleteProbe() {
 		if (selectedProbe == null || selectedProbe.id.length == 0) return;
+
 		const options: RequestInit = {
 			method: 'DELETE',
 			headers: { 'Content-Type': 'application/json', accept: '*/*' }
 		};
+
 		await fetch(`${env.PUBLIC_API_URL}/probe?id=` + selectedProbe.id, options);
-		refreshData();
+
+		showDeleteModal = false;
+
+		fetchProbes();
 	}
 
-	function setSelectedRow(rowDetail: DataTableRow) {
-		selectedProbe = <Probe>rowDetail;
-	}
-
-	function openEditModal() {
-		selectedEditProbe = selectedProbe;
-
+	function openEditModal(probe: DataTableRow) {
+		selectedProbe = <Probe>probe;
 		showAddPanelModal = true;
 	}
 </script>
@@ -73,44 +76,41 @@
 	]}
 />
 
-{#await fetchProbes()}
+{#if isLoading}
 	<DataTableSkeleton showHeader={false} showToolbar={false} {headers} />
-{:then rows}
-	<DataTable
-		sortable
-		zebra
-		{headers}
-		{rows}
-		on:mouseenter:row={(row) => setSelectedRow(row.detail)}
-	>
-		<svelte:fragment slot="cell" let:cell>
+{:else if fetchError !== ''}
+	<p>{fetchError}</p>
+{:else}
+	<DataTable sortable zebra {headers} bind:rows={probes}>
+		<svelte:fragment slot="cell" let:cell let:row>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
-					<OverflowMenuItem text="Bearbeiten" on:click={openEditModal} />
-					<OverflowMenuItem danger text="Löschen" on:click={() => (openDelete = true)} />
+					<OverflowMenuItem
+						text="Bearbeiten"
+						on:click={() => {
+							openEditModal(row);
+						}}
+					/>
+					<OverflowMenuItem danger text="Löschen" on:click={() => (showDeleteModal = true)} />
 				</OverflowMenu>
 			{:else}{cell.value}{/if}
 		</svelte:fragment>
 	</DataTable>
 	<Button on:click={() => (showAddPanelModal = true)}>Sonde erstellen</Button>
-{:catch error}
-	<p>Error loading: {error.message}</p>
-{/await}
+{/if}
 
-<AddProbeModal
-	bind:isOpen={showAddPanelModal}
-	onSubmitClicked={refreshData}
-	bind:selectedProbe={selectedEditProbe}
-/>
+{#if selectedProbe != null}
+	<AddProbeModal bind:isOpen={showAddPanelModal} bind:selectedProbe onSubmitClicked={fetchProbes} />
+{/if}
 
 <Modal
 	danger
 	size="sm"
-	bind:open={openDelete}
+	bind:open={showDeleteModal}
 	modalHeading="Sonde löschen"
 	primaryButtonText="Löschen"
 	secondaryButtonText="Abbruch"
-	on:click:button--secondary={() => (openDelete = false)}
+	on:click:button--secondary={() => (showDeleteModal = false)}
 	on:open
 	on:close
 	on:submit={deleteProbe}

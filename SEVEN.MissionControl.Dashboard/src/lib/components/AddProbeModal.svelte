@@ -1,44 +1,21 @@
 <script lang="ts">
-	import type { Probe } from '$lib/types';
+	import { measurementTypeLabels, type Probe } from '$lib/types';
 	import { Modal, TextInput, MultiSelect } from 'carbon-components-svelte';
 	import { env } from '$env/dynamic/public';
+	import { FlaggedEnum } from '$lib/utils/flagged-enum';
 
 	export let isOpen: boolean;
 	export let onSubmitClicked: () => void;
-	export let selectedProbe: Probe | null;
+	export let selectedProbe: Probe;
 
 	let name = '';
-	let measurementsType = 0;
-	let multiSelectLabel: string;
-	let multiselectIds: Array<string> = [];
-
 	let modalHeading = 'Neues Sonde';
 	let primaryButtonText = 'Sonde erstellen';
 
-	const items = [
-		{ id: '0', text: 'Ohne', flag: 0 },
-		{ id: '1', text: 'Temperatur', flag: 1 },
-		{ id: '2', text: 'Prozent', flag: 2 },
-		{ id: '4', text: 'Ladezustand', flag: 4 },
-		{ id: '8', text: 'Feuchtigkeit', flag: 8 },
-		{ id: '16', text: 'UV-Strahlung', flag: 16 },
-		{ id: '32', text: 'Lichtintensität', flag: 32 },
-		{ id: '64', text: 'Bodenfeuchtigkeit', flag: 64 },
-		{ id: '128', text: 'Schaltzustand', flag: 128 }
-	];
-
-	const formatSelected = (i: any) =>
-		i.length === 0
-			? 'Wähle Messwerte'
-			: i.map((id: string) => items.find((item) => item.id === id)?.text).join(', ');
-
-	$: {
-		multiSelectLabel = formatSelected(multiselectIds);
-		measurementsType = 0;
-		multiselectIds.forEach((id) => {
-			measurementsType = measurementsType + Number(id);
-		});
-	}
+	const flags = new FlaggedEnum(measurementTypeLabels);
+	const flagsWithLabels = flags.getAllValuesAsIdTextObjects();
+	let selectedIds: string[] = [];
+	let multiSelectLabel = '';
 
 	async function createProbe(): Promise<Probe> {
 		if (selectedProbe == null || selectedProbe.id.length == 0) {
@@ -47,7 +24,7 @@
 				headers: { 'Content-Type': 'application/json', accept: '*/*' },
 				body: JSON.stringify({
 					name: name,
-					measurementsType: Number(measurementsType)
+					measurementsType: flags.getValueFromIds(selectedIds)
 				})
 			};
 
@@ -59,12 +36,16 @@
 				body: JSON.stringify({
 					id: selectedProbe.id,
 					name: name,
-					measurementsType: Number(measurementsType)
+					measurementsType: flags.getValueFromIds(selectedIds)
 				})
 			};
 
 			return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
 		}
+	}
+
+	$: {
+		multiSelectLabel = flags.getLabelsFromIds(selectedIds).join(', ') || 'Wähle Messwerte';
 	}
 </script>
 
@@ -79,40 +60,38 @@
 	}}
 	on:open={() => {
 		name = selectedProbe != null ? selectedProbe.name : '';
-		measurementsType = selectedProbe != null ? selectedProbe.measurementsType : 0;
 		modalHeading = selectedProbe != null ? 'Sonde bearbeiten' : 'Neues Sonde';
 		primaryButtonText = selectedProbe != null ? 'Sonde speichern' : 'Sonde erstellen';
-		multiselectIds = [];
-		for (var bit = 8; bit >= 0; bit--) {
-			var mask = Math.pow(2, bit);
-			if ((measurementsType & mask) == mask) {
-				multiselectIds.push(Math.pow(2, bit).toString());
-			}
-		}
+		selectedIds = flags.getValuesAsStrings(selectedProbe.measurementsType);
 	}}
 	on:close={() => {
 		isOpen = false;
+		selectedIds = [];
 		name = '';
-		measurementsType = 0;
-		multiselectIds = [];
-		selectedProbe = null;
+		multiSelectLabel = '';
 	}}
 	on:submit={async () => {
 		await createProbe();
 		onSubmitClicked();
 		isOpen = false;
+		selectedIds = [];
 		name = '';
-		measurementsType = 0;
-		multiselectIds = [];
-		selectedProbe = null;
+		multiSelectLabel = '';
 	}}
 >
 	<TextInput id="probe-name" labelText="Sondenname" placeholder="Sondenname..." bind:value={name} />
+	<TextInput
+		id="probe-name"
+		labelText="Sondenname"
+		placeholder="Sondenname..."
+		bind:value={selectedProbe.measurementsType}
+	/>
 	<MultiSelect
 		titleText="Messwerte"
 		label={multiSelectLabel}
-		bind:selectedIds={multiselectIds}
-		{items}
+		items={flagsWithLabels}
+		bind:selectedIds
+		sortItem={() => {}}
 	/>
 </Modal>
 
