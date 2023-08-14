@@ -10,7 +10,12 @@
 		DataTable,
 		OverflowMenu,
 		OverflowMenuItem,
-		DataTableSkeleton
+		DataTableSkeleton,
+		Toolbar,
+		ToolbarContent,
+		ToolbarMenu,
+		ToolbarMenuItem,
+		ToolbarSearch
 	} from 'carbon-components-svelte';
 	import { Button, Modal, TextInput } from 'carbon-components-svelte';
 	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
@@ -82,6 +87,17 @@
 	<p>{fetchError}</p>
 {:else}
 	<DataTable sortable zebra {headers} bind:rows={probes}>
+		<Toolbar>
+			<ToolbarContent>
+				<ToolbarSearch />
+				<Button
+					on:click={() => {
+						selectedProbe = null;
+						showAddPanelModal = true;
+					}}>Sonde erstellen</Button
+				>
+			</ToolbarContent>
+		</Toolbar>
 		<svelte:fragment slot="cell" let:cell let:row>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
@@ -96,12 +112,16 @@
 			{:else}{cell.value}{/if}
 		</svelte:fragment>
 	</DataTable>
-	<Button on:click={() => (showAddPanelModal = true)}>Sonde erstellen</Button>
 {/if}
 
-{#if selectedProbe != null}
-	<AddProbeModal bind:isOpen={showAddPanelModal} bind:selectedProbe onSubmitClicked={fetchProbes} />
-{/if}
+<AddProbeModal
+	bind:isOpen={showAddPanelModal}
+	bind:selectedProbe
+	onSubmitClicked={() => {
+		selectedProbe = null;
+		fetchProbes();
+	}}
+/>
 
 <Modal
 	danger

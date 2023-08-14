@@ -6,7 +6,7 @@
 
 	export let isOpen: boolean;
 	export let onSubmitClicked: () => void;
-	export let selectedProbe: Probe;
+	export let selectedProbe: Probe | null;
 
 	let name = '';
 	let modalHeading = 'Neues Sonde';
@@ -62,7 +62,8 @@
 		name = selectedProbe != null ? selectedProbe.name : '';
 		modalHeading = selectedProbe != null ? 'Sonde bearbeiten' : 'Neues Sonde';
 		primaryButtonText = selectedProbe != null ? 'Sonde speichern' : 'Sonde erstellen';
-		selectedIds = flags.getValuesAsStrings(selectedProbe.measurementsType);
+		selectedIds =
+			selectedProbe != null ? flags.getValuesAsStrings(selectedProbe.measurementsType) : [];
 	}}
 	on:close={() => {
 		isOpen = false;
@@ -80,12 +81,6 @@
 	}}
 >
 	<TextInput id="probe-name" labelText="Sondenname" placeholder="Sondenname..." bind:value={name} />
-	<TextInput
-		id="probe-name"
-		labelText="Sondenname"
-		placeholder="Sondenname..."
-		bind:value={selectedProbe.measurementsType}
-	/>
 	<MultiSelect
 		titleText="Messwerte"
 		label={multiSelectLabel}
