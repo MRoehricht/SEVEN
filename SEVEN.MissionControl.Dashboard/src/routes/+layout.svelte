@@ -43,7 +43,11 @@
 </script>
 
 <Theme bind:theme />
-<Header company="SEVEN" platformName="Sandberg Electric Vehicle Eden Network - v{version}" bind:isSideNavOpen>
+<Header
+	company="SEVEN"
+	platformName="Sandberg Electric Vehicle Eden Network - v{version}"
+	bind:isSideNavOpen
+>
 	{#if $page.data.session}
 		<HeaderUtilities>
 			<HeaderAction
