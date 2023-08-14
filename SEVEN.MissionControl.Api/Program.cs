@@ -88,7 +88,6 @@ builder.Services.AddTransient<IProbeRepository, ProbeRepository>();
 builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
 builder.Services.AddSingleton<EventPublisher>(new EventPublisher());
 builder.Services.AddSingleton<ServerSendEventsService>(provider => new ServerSendEventsService(provider.GetService<EventPublisher>(), provider.GetService<ILogger<ServerSendEventsService>>()));
-
 //EventGenerator.Initialize(builder.Services);
 
 var app = builder.Build();
