@@ -6,12 +6,18 @@
 	import type { Probe } from '$lib/types';
 	import { env } from '$env/dynamic/public';
 	import DashboardToolbar from '$lib/components/DashboardToolbar.svelte';
-	import { DataTable, OverflowMenu, OverflowMenuItem, DataTableSkeleton } from 'carbon-components-svelte';
+	import {
+		DataTable,
+		OverflowMenu,
+		OverflowMenuItem,
+		DataTableSkeleton
+	} from 'carbon-components-svelte';
 	import { Button, Modal, TextInput } from 'carbon-components-svelte';
 	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
+	import { onMount } from 'svelte';
 
 	let showAddPanelModal = false;
-	let selectedProbe:Probe;
+	let selectedProbe: Probe;
 	var selectedEditProbe: Probe | null = null;
 	let openDelete = false;
 	const headers = [
@@ -20,44 +26,43 @@
 		{ key: 'overflow', empty: true }
 	];
 
-	let doFetchProbes = fetchProbes()
+	onMount(() => {
+		refreshData();
+	});
 
 	function refreshData() {
 		openDelete = false;
 		selectedEditProbe = null;
-		doFetchProbes = fetchProbes()
+		fetchProbes();
 	}
 
 	async function fetchProbes(): Promise<Probe[]> {
 		const options: RequestInit = {
 			method: 'GET',
-			headers: { 'Content-Type': 'application/json', accept: '*/*' }			
+			headers: { 'Content-Type': 'application/json', accept: '*/*' }
 		};
-		return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) =>
-			res.json()
-		);
+		return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
 	}
 
 	async function deleteProbe() {
-		if(selectedProbe == null || selectedProbe.id.length == 0) return;
+		if (selectedProbe == null || selectedProbe.id.length == 0) return;
 		const options: RequestInit = {
 			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json', accept: '*/*' }			
+			headers: { 'Content-Type': 'application/json', accept: '*/*' }
 		};
-		await fetch(`${env.PUBLIC_API_URL}/probe?id=`+selectedProbe.id, options);		
+		await fetch(`${env.PUBLIC_API_URL}/probe?id=` + selectedProbe.id, options);
 		refreshData();
 	}
 
-	function setSelectedRow(rowDetail:DataTableRow){		
-		selectedProbe = (<Probe>rowDetail);		
+	function setSelectedRow(rowDetail: DataTableRow) {
+		selectedProbe = <Probe>rowDetail;
 	}
 
-	function openEditModal(){
-		
+	function openEditModal() {
 		selectedEditProbe = selectedProbe;
-		
-		showAddPanelModal = true
-	}	
+
+		showAddPanelModal = true;
+	}
 </script>
 
 <DashboardToolbar
@@ -68,15 +73,21 @@
 	]}
 />
 
-{#await doFetchProbes}
-<DataTableSkeleton showHeader={false} showToolbar={false} {headers} />
+{#await fetchProbes()}
+	<DataTableSkeleton showHeader={false} showToolbar={false} {headers} />
 {:then rows}
-	<DataTable sortable zebra {headers} {rows} on:mouseenter:row={(row) => setSelectedRow(row.detail)} >
+	<DataTable
+		sortable
+		zebra
+		{headers}
+		{rows}
+		on:mouseenter:row={(row) => setSelectedRow(row.detail)}
+	>
 		<svelte:fragment slot="cell" let:cell>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
-					<OverflowMenuItem text="Bearbeiten" on:click={openEditModal} />					
-					<OverflowMenuItem danger text="Löschen" on:click={() => openDelete = true} />
+					<OverflowMenuItem text="Bearbeiten" on:click={openEditModal} />
+					<OverflowMenuItem danger text="Löschen" on:click={() => (openDelete = true)} />
 				</OverflowMenu>
 			{:else}{cell.value}{/if}
 		</svelte:fragment>
@@ -86,18 +97,23 @@
 	<p>Error loading: {error.message}</p>
 {/await}
 
-<AddProbeModal bind:isOpen={showAddPanelModal} onSubmitClicked={refreshData} bind:selectedProbe={selectedEditProbe}/>
+<AddProbeModal
+	bind:isOpen={showAddPanelModal}
+	onSubmitClicked={refreshData}
+	bind:selectedProbe={selectedEditProbe}
+/>
 
 <Modal
-  danger
-  size="sm"
-  bind:open={openDelete}
-  modalHeading="Sonde löschen"
-  primaryButtonText="Löschen"
-  secondaryButtonText="Abbruch"
-  on:click:button--secondary={() => (openDelete = false)}
-  on:open
-  on:close
-  on:submit={deleteProbe}>
-  <p>Damit wird die Sonde '{selectedProbe?.name}' unwiderruflich gelöscht.</p>
+	danger
+	size="sm"
+	bind:open={openDelete}
+	modalHeading="Sonde löschen"
+	primaryButtonText="Löschen"
+	secondaryButtonText="Abbruch"
+	on:click:button--secondary={() => (openDelete = false)}
+	on:open
+	on:close
+	on:submit={deleteProbe}
+>
+	<p>Damit wird die Sonde '{selectedProbe?.name}' unwiderruflich gelöscht.</p>
 </Modal>
