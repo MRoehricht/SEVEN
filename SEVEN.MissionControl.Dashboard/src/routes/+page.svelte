@@ -5,13 +5,7 @@
 	import Grid, { GridItem, type GridController } from 'svelte-grid-extended';
 	import DashboardToolbar from '$lib/components/DashboardToolbar.svelte';
 	import MeasurementPanel from '$lib/components/MeasurementPanel.svelte';
-	import {
-		Button,
-		Modal,
-		OverflowMenu,
-		OverflowMenuItem,
-		TextInput
-	} from 'carbon-components-svelte';
+	import { Button, OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
 	import { Settings, Unlocked, Locked } from 'carbon-icons-svelte';
 	import { panels } from '$lib/stores/dashboard-panel-store';
 	import AddMeasurementPanelModal from '$lib/components/AddMeasurementPanelModal.svelte';
@@ -19,6 +13,10 @@
 
 	let showAddPanelModal = false;
 	let isLocked = true;
+	let selectedPanel: AddMeasurementPanel | null = null;
+
+	let needsUpdate: Date | null = null;
+
 	const itemSize = { height: 100 };
 
 	let gridController: GridController;
@@ -28,20 +26,38 @@
 		const h = 3;
 		const newPosition = gridController.getFirstAvailablePosition(w, h);
 
-		$panels = newPosition
-			? [
-					...$panels,
-					{
-						id: $panels.length + 1 + '',
+		if (selectedPanel) {
+			$panels = $panels.map((p) => {
+				if (p.id === selectedPanel?.id) {
+					return {
+						...p,
 						title: panel.title,
 						probeId: panel.probeId,
 						measurementType: panel.measurementType,
-						gridItem: { x: newPosition.x, y: newPosition.y, w, h, min: { w, h } }
-					}
-			  ]
-			: $panels;
+						refreshInterval: panel.refreshInterval
+					};
+				}
+				return p;
+			});
+		} else {
+			$panels = newPosition
+				? [
+						...$panels,
+						{
+							id: $panels.length + 1 + '',
+							title: panel.title,
+							probeId: panel.probeId,
+							measurementType: panel.measurementType,
+							refreshInterval: panel.refreshInterval,
+							gridItem: { x: newPosition.x, y: newPosition.y, w, h, min: { w, h } }
+						}
+				  ]
+				: $panels;
+		}
 
 		localStorage.setItem('dashboard-panels', JSON.stringify($panels));
+
+		needsUpdate = new Date();
 	}
 
 	if (typeof window !== 'undefined') {
@@ -61,7 +77,11 @@
 	}
 </script>
 
-<AddMeasurementPanelModal bind:isOpen={showAddPanelModal} onSubmitClicked={addNewPanel} />
+<AddMeasurementPanelModal
+	bind:selectedPanel
+	bind:isOpen={showAddPanelModal}
+	onSubmitClicked={addNewPanel}
+/>
 
 <DashboardToolbar title="Mein Dashboard" crumbs={[{ label: 'Dashboard', path: '/' }]}>
 	{#if isLocked}
@@ -91,24 +111,44 @@
 	</OverflowMenu>
 </DashboardToolbar>
 
-<div class="full-height">
-	<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
-		{#each $panels as { id, title, probeId, measurementType, gridItem } (id)}
-			{#key id}
-				<GridItem
-					{id}
-					bind:x={gridItem.x}
-					bind:y={gridItem.y}
-					bind:w={gridItem.w}
-					bind:h={gridItem.h}
-					bind:min={gridItem.min}
-				>
-					<MeasurementPanel {title} {probeId} {measurementType} />
-				</GridItem>
-			{/key}
-		{/each}
-	</Grid>
-</div>
+{#key needsUpdate}
+	<div class="full-height">
+		<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
+			{#each $panels as { id, title, probeId, refreshInterval, measurementType, gridItem } (id)}
+				{#key id}
+					<GridItem
+						{id}
+						bind:x={gridItem.x}
+						bind:y={gridItem.y}
+						bind:w={gridItem.w}
+						bind:h={gridItem.h}
+						bind:min={gridItem.min}
+					>
+						<MeasurementPanel
+							{title}
+							{probeId}
+							{refreshInterval}
+							{measurementType}
+							onEditClicked={() => {
+								const panel = $panels.find((p) => p.id === id);
+								if (panel) {
+									selectedPanel = {
+										id: panel.id,
+										title: panel.title,
+										probeId: panel.probeId,
+										measurementType: panel.measurementType,
+										refreshInterval: panel.refreshInterval
+									};
+									showAddPanelModal = true;
+								}
+							}}
+						/>
+					</GridItem>
+				{/key}
+			{/each}
+		</Grid>
+	</div>
+{/key}
 
 <style>
 	.full-height {

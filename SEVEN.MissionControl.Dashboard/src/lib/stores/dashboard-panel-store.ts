@@ -8,5 +8,6 @@ export type PanelProps = {
 	title: string;
 	probeId: string;
 	measurementType: number;
+	refreshInterval: number;
 	gridItem: GridItemProps;
 };

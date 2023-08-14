@@ -8,8 +8,10 @@ export type Measurement = {
 };
 
 export type AddMeasurementPanel = {
+	id: string;
 	title: string;
 	probeId: string;
+	refreshInterval: number;
 	measurementType: number;
 };
 

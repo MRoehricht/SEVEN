@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { measurementTypeLabels, type AddMeasurementPanel } from '$lib/types';
 	import { FlaggedEnum } from '$lib/utils/flagged-enum';
-	import { Modal, TextInput, ComboBox, Select, SelectItem } from 'carbon-components-svelte';
+	import { Modal, TextInput, Select, SelectItem } from 'carbon-components-svelte';
 
 	let title = '';
 	let probeId = '';
+	let refreshInterval = 0;
 
 	let measurementType = 0;
 	const flags = new FlaggedEnum(measurementTypeLabels);
@@ -12,6 +13,7 @@
 
 	export let isOpen: boolean;
 	export let onSubmitClicked: (panel: AddMeasurementPanel) => void;
+	export let selectedPanel: AddMeasurementPanel | null;
 </script>
 
 <Modal
@@ -20,18 +22,35 @@
 	primaryButtonText="Panel erstellen"
 	secondaryButtonText="Abbrechen"
 	on:click:button--secondary={() => (isOpen = false)}
-	on:open
-	on:close
+	on:open={() => {
+		if (selectedPanel) {
+			title = selectedPanel.title;
+			probeId = selectedPanel.probeId;
+			refreshInterval = selectedPanel.refreshInterval;
+			measurementType = selectedPanel.measurementType;
+		}
+	}}
+	on:close={() => {
+		isOpen = false;
+		title = '';
+		probeId = '';
+		refreshInterval = 0;
+		measurementType = 0;
+		selectedPanel = null;
+	}}
 	on:submit={() => {
 		onSubmitClicked({
+			id: selectedPanel?.id ?? '',
 			title,
 			probeId,
-			measurementType
+			measurementType,
+			refreshInterval
 		});
 
 		isOpen = false;
 		title = '';
 		probeId = '';
+		refreshInterval = 0;
 		measurementType = 0;
 	}}
 >
@@ -42,4 +61,10 @@
 			<SelectItem {value} text={label} />
 		{/each}
 	</Select>
+	<TextInput
+		id="refresh-interval"
+		labelText="Refresh-Interval (in Sekunden)"
+		placeholder="Refresh-Interval..."
+		bind:value={refreshInterval}
+	/>
 </Modal>

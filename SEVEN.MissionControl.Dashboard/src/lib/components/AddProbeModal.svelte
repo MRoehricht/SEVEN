@@ -70,6 +70,7 @@
 		selectedIds = [];
 		name = '';
 		multiSelectLabel = '';
+		selectedProbe = null;
 	}}
 	on:submit={async () => {
 		await createProbe();

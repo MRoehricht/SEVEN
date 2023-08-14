@@ -4,11 +4,13 @@
 	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import { ToolbarControlTypes } from '@carbon/charts';
 	import { env } from '$env/dynamic/public';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	export let title: string;
 	export let probeId: string;
+	export let refreshInterval: number;
 	export let measurementType: number;
+	export let onEditClicked: (probeId: string) => void;
 
 	let isLoading = true;
 	let fetchError = '';
@@ -55,6 +57,14 @@
 				controls: [
 					{
 						type: ToolbarControlTypes.CUSTOM,
+						title: 'Bearbeiten',
+						text: 'Bearbeiten',
+						clickFunction: () => {
+							onEditClicked(probeId);
+						}
+					},
+					{
+						type: ToolbarControlTypes.CUSTOM,
 						title: 'Aktualisieren',
 						text: 'Aktualisieren',
 						clickFunction: () => {
@@ -66,8 +76,20 @@
 		};
 	}
 
+	let interval: number;
+
 	onMount(() => {
 		fetchMeasurements();
+
+		if (refreshInterval > 0) {
+			interval = setInterval(() => {
+				fetchMeasurements();
+			}, refreshInterval * 1000);
+		}
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 </script>
 
