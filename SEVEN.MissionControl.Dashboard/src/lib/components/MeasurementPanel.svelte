@@ -24,30 +24,25 @@
 	}
 </script>
 
-{#await fetchMeasurements()}
- Loading ...
-<!--
- <Tile class="dashboard-tile">
-	<LineChart
-		data={[]} as const,
-		options={{
-			title,
-			height: '100%',
-			width: '100%',
-			data: {loading: true},		
-		}}
-	/>
-</Tile>
--->
-{:then measurements}
-	<Tile class="dashboard-tile">
+<Tile class="dashboard-tile">
+	{#await fetchMeasurements()}
+		<LineChart
+			data={[]}
+			options={{
+				title,
+				height: '100%',
+				width: '100%',
+				data: { loading: true }
+			}}
+		/>
+	{:then measurements}
 		<LineChart
 			data={measurements}
 			options={{
 				title,
 				height: '100%',
 				width: '100%',
-				data: { groupMapsTo: 'probeId'},
+				data: { groupMapsTo: 'probeId' },
 				curve: 'curveMonotoneX',
 				points: { radius: 0 },
 				axes: {
@@ -68,10 +63,10 @@
 				}
 			}}
 		/>
-	</Tile>
-{:catch error}
-	<p>Error loading: {error.message}</p>
-{/await}
+	{:catch error}
+		<p>{error.message}</p>
+	{/await}
+</Tile>
 
 <style>
 	:global(.dashboard-tile) {
