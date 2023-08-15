@@ -17,6 +17,7 @@
 
 	let isLoading = true;
 	let fetchError = '';
+	let lastUpdated = new Date();
 	let measurements: MeasurementWithGroup[] = [];
 
 	async function fetchMeasurements(ignoreLoading = false) {
@@ -49,6 +50,7 @@
 		// force redraw
 		measurements = [...measurements];
 
+		lastUpdated = new Date();
 		isLoading = false;
 	}
 
@@ -114,7 +116,14 @@
 	{:else if fetchError !== ''}
 		<p>{fetchError}</p>
 	{:else}
-		<LineChart data={measurements} options={getLineChartOptions(false)} />
+		<div class="flex">
+			<LineChart data={measurements} options={getLineChartOptions(false)} />
+			{#if refreshInterval > 0}
+				<span class="last-updated">
+					aktualisiert: {lastUpdated.toLocaleTimeString()}
+				</span>
+			{/if}
+		</div>
 	{/if}
 </Tile>
 
@@ -122,5 +131,19 @@
 	:global(.dashboard-tile) {
 		width: 100%;
 		height: 100%;
+	}
+
+	.flex {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	.last-updated {
+		font-size: 0.75rem;
+		display: flex;
+		align-items: end;
+		justify-content: end;
+		width: 100%;
 	}
 </style>

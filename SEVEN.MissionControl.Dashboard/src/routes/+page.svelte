@@ -10,6 +10,7 @@
 	import { panels } from '$lib/stores/dashboard-panel-store';
 	import AddMeasurementPanelModal from '$lib/components/AddMeasurementPanelModal.svelte';
 	import type { AddMeasurementPanel } from '$lib/types';
+	import { onMount } from 'svelte';
 
 	let showAddPanelModal = false;
 	let isLocked = true;
@@ -17,9 +18,14 @@
 
 	let needsUpdate: Date | null = null;
 
-	const itemSize = { height: 100 };
+	let innerWidth = 0;
+	let innerHeight = 0;
 
 	let gridController: GridController;
+
+	$: windowSizeChanged = innerWidth || innerHeight;
+
+	const itemSize = { height: 100 };
 
 	function addNewPanel(panel: AddMeasurementPanel) {
 		const w = 2;
@@ -60,14 +66,6 @@
 		needsUpdate = new Date();
 	}
 
-	if (typeof window !== 'undefined') {
-		if (!localStorage.getItem('dashboard-panels')) {
-			localStorage.setItem('dashboard-panels', JSON.stringify($panels));
-		} else {
-			$panels = JSON.parse(localStorage.getItem('dashboard-panels') as string);
-		}
-	}
-
 	function toggleDashboardLock(locked: boolean) {
 		isLocked = locked;
 
@@ -75,7 +73,17 @@
 			localStorage.setItem('dashboard-panels', JSON.stringify($panels));
 		}
 	}
+
+	onMount(() => {
+		if (!localStorage.getItem('dashboard-panels')) {
+			localStorage.setItem('dashboard-panels', JSON.stringify($panels));
+		} else {
+			$panels = JSON.parse(localStorage.getItem('dashboard-panels') as string);
+		}
+	});
 </script>
+
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <AddMeasurementPanelModal
 	bind:selectedPanel
@@ -111,7 +119,7 @@
 	</OverflowMenu>
 </DashboardToolbar>
 
-{#key needsUpdate}
+{#key needsUpdate || windowSizeChanged}
 	<div class="full-height">
 		<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
 			{#each $panels as { id, title, probeId, refreshInterval, measurementType, gridItem } (id)}
