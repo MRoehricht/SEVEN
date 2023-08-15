@@ -115,36 +115,34 @@
 	<div class="full-height">
 		<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
 			{#each $panels as { id, title, probeId, refreshInterval, measurementType, gridItem } (id)}
-				{#key id}
-					<GridItem
-						{id}
-						bind:x={gridItem.x}
-						bind:y={gridItem.y}
-						bind:w={gridItem.w}
-						bind:h={gridItem.h}
-						bind:min={gridItem.min}
-					>
-						<MeasurementPanel
-							{title}
-							{probeId}
-							{refreshInterval}
-							{measurementType}
-							onEditClicked={() => {
-								const panel = $panels.find((p) => p.id === id);
-								if (panel) {
-									selectedPanel = {
-										id: panel.id,
-										title: panel.title,
-										probeId: panel.probeId,
-										measurementType: panel.measurementType,
-										refreshInterval: panel.refreshInterval
-									};
-									showAddPanelModal = true;
-								}
-							}}
-						/>
-					</GridItem>
-				{/key}
+				<GridItem
+					{id}
+					bind:x={gridItem.x}
+					bind:y={gridItem.y}
+					bind:w={gridItem.w}
+					bind:h={gridItem.h}
+					bind:min={gridItem.min}
+				>
+					<MeasurementPanel
+						{title}
+						{probeId}
+						{refreshInterval}
+						{measurementType}
+						onEditClicked={() => {
+							const panel = $panels.find((p) => p.id === id);
+							if (panel) {
+								selectedPanel = {
+									id: panel.id,
+									title: panel.title,
+									probeId: panel.probeId,
+									measurementType: panel.measurementType,
+									refreshInterval: panel.refreshInterval
+								};
+								showAddPanelModal = true;
+							}
+						}}
+					/>
+				</GridItem>
 			{/each}
 		</Grid>
 	</div>
@@ -152,6 +150,7 @@
 
 <style>
 	.full-height {
-		height: calc(100vh - 7rem - 46px);
+		display: grid;
+		grid-template-rows: 100px;
 	}
 </style>
