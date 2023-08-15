@@ -22,7 +22,8 @@
 		DocumentTasks,
 		Microservices_1,
 		UserAvatarFilledAlt,
-		Dashboard
+		AgricultureAnalytics,
+		TouchInteraction
 	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
@@ -67,7 +68,12 @@
 {#if $page.data.session}
 	<SideNav bind:isOpen={isSideNavOpen} rail>
 		<SideNavItems>
-			<SideNavLink icon={Dashboard} text="Dashboard" href="/" isSelected={path === '/'} />
+			<SideNavLink
+				icon={AgricultureAnalytics}
+				text="Dashboard"
+				href="/"
+				isSelected={path === '/'}
+			/>
 			<!--<SideNavLink
 				icon={DocumentTasks}
 				text="Rovertasks"
@@ -79,6 +85,12 @@
 				text="Sonden"
 				href="/probes"
 				isSelected={path?.endsWith('/probes')}
+			/>
+			<SideNavLink
+				icon={TouchInteraction}
+				text="Aktoren"
+				href="/actuators"
+				isSelected={path?.endsWith('/actuators')}
 			/>
 		</SideNavItems>
 	</SideNav>
