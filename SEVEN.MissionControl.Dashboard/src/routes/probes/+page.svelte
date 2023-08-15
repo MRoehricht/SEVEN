@@ -67,14 +67,8 @@
 		fetchProbes();
 	}
 
-	function openEditModal(probe: DataTableRow) {
+	function setSelectedProbe(probe: DataTableRow) {
 		selectedProbe = <Probe>probe;
-		showAddPanelModal = true;
-	}
-
-	function openDeleteModal(probe: DataTableRow) {
-		selectedProbe = <Probe>probe;
-		showDeleteModal = true;
 	}
 </script>
 
@@ -109,14 +103,16 @@
 					<OverflowMenuItem
 						text="Bearbeiten"
 						on:click={() => {
-							openEditModal(row);
+							setSelectedProbe(row);
+							showAddPanelModal = true;
 						}}
 					/>
 					<OverflowMenuItem
 						danger
 						text="Löschen"
 						on:click={() => {
-							openDeleteModal(row);
+							setSelectedProbe(row);
+							showDeleteModal = true;
 						}}
 					/>
 				</OverflowMenu>
