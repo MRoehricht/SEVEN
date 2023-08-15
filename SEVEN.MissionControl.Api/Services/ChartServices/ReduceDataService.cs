@@ -18,7 +18,6 @@ public static class ReduceDataService
             }
             else if(!string.IsNullOrWhiteSpace(measurement.Value) && lastMeasurement.Value != measurement.Value)
             {
-                reduceDataList.Add(lastMeasurement);
                 reduceDataList.Add(measurement);
             }
             else if (measurement == measurements.Last())
