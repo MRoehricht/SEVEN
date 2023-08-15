@@ -3,6 +3,7 @@ using OpenIddict.Abstractions;
 using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 using SEVEN.MissionControl.Api.Services;
+using SEVEN.MissionControl.Api.Services.ChartServices;
 
 namespace SEVEN.MissionControl.Api.Features;
 
@@ -49,6 +50,9 @@ public static class MeasurementEndpoint
 
         if (filter.Type.HasValue)
             measurements = measurements.Where(_ => _.MeasurementType == (filter.Type.Value));
+
+        if (filter.ReduceData.HasValue)
+            measurements = ReduceDataService.ReduceData(measurements);
 
         return Results.Ok(measurements);
     }
