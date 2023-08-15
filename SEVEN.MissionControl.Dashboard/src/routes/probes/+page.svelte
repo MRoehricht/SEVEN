@@ -71,6 +71,11 @@
 		selectedProbe = <Probe>probe;
 		showAddPanelModal = true;
 	}
+
+	function openDeleteModal(probe: DataTableRow) {
+		selectedProbe = <Probe>probe;
+		showDeleteModal = true;
+	}
 </script>
 
 <DashboardToolbar
@@ -107,7 +112,13 @@
 							openEditModal(row);
 						}}
 					/>
-					<OverflowMenuItem danger text="Löschen" on:click={() => (showDeleteModal = true)} />
+					<OverflowMenuItem
+						danger
+						text="Löschen"
+						on:click={() => {
+							openDeleteModal(row);
+						}}
+					/>
 				</OverflowMenu>
 			{:else}{cell.value}{/if}
 		</svelte:fragment>
