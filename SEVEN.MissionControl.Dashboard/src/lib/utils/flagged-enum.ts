@@ -30,4 +30,11 @@ export class FlaggedEnum<T extends number> {
 	getLabelsFromIds(ids: string[]): string[] {
 		return ids.map((id) => this.labels[Number(id) as T]);
 	}
+
+	getLabelFromValue(value: number): string {
+		return this.values
+			.filter((enumValue) => (value & enumValue) !== 0)
+			.map((enumValue) => this.labels[enumValue])
+			.join(', ');
+	}
 }

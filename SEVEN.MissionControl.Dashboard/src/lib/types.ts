@@ -7,6 +7,8 @@ export type Measurement = {
 	localTime: string;
 };
 
+export type MeasurementWithGroup = Measurement & { group: string };
+
 export type AddMeasurementPanel = {
 	id: string;
 	title: string;
