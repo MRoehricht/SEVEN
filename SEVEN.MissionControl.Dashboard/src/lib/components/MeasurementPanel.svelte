@@ -64,6 +64,9 @@
 				left: { mapsTo: 'value', scaleType: ScaleTypes.LINEAR, title: 'Wert' },
 				bottom: { mapsTo: 'time', scaleType: ScaleTypes.TIME, title: 'Datum' }
 			},
+			timeScale: {
+				addSpaceOnEdges: 0
+			},
 			toolbar: {
 				enabled: true,
 				controls: [
