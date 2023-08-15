@@ -16,8 +16,11 @@
 	let fetchError = '';
 	let measurements: Measurement[] = [];
 
-	async function fetchMeasurements() {
-		isLoading = true;
+	async function fetchMeasurements(ignoreLoading = false) {
+		if (!ignoreLoading) {
+			isLoading = true;
+		}
+
 		const options: RequestInit = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', accept: '*/*' },
@@ -31,6 +34,9 @@
 			.catch((err) => {
 				fetchError = err.message;
 			});
+
+		// force redraw
+		measurements = [...measurements];
 
 		isLoading = false;
 	}
@@ -46,11 +52,6 @@
 			axes: {
 				left: { mapsTo: 'value', scaleType: ScaleTypes.LINEAR, title: 'Wert' },
 				bottom: { mapsTo: 'time', scaleType: ScaleTypes.TIME, title: 'Datum' }
-			},
-			zoomBar: {
-				top: {
-					enabled: true
-				}
 			},
 			toolbar: {
 				enabled: true,
@@ -83,7 +84,7 @@
 
 		if (refreshInterval > 0) {
 			interval = setInterval(() => {
-				fetchMeasurements();
+				fetchMeasurements(true);
 			}, refreshInterval * 1000);
 		}
 	});
