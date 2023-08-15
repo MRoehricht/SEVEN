@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { Tile } from 'carbon-components-svelte';
-	import type { Measurement } from '$lib/types';
+	import { measurementTypeLabels, type Measurement, type MeasurementWithGroup } from '$lib/types';
 	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import { ToolbarControlTypes } from '@carbon/charts';
 	import { env } from '$env/dynamic/public';
 	import { onDestroy, onMount } from 'svelte';
+	import { FlaggedEnum } from '$lib/utils/flagged-enum';
 
 	export let title: string;
 	export let probeId: string;
@@ -12,12 +13,17 @@
 	export let measurementType: number;
 	export let onEditClicked: (probeId: string) => void;
 
+	const flags = new FlaggedEnum(measurementTypeLabels);
+
 	let isLoading = true;
 	let fetchError = '';
-	let measurements: Measurement[] = [];
+	let measurements: MeasurementWithGroup[] = [];
 
-	async function fetchMeasurements() {
-		isLoading = true;
+	async function fetchMeasurements(ignoreLoading = false) {
+		if (!ignoreLoading) {
+			isLoading = true;
+		}
+
 		const options: RequestInit = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', accept: '*/*' },
@@ -33,6 +39,16 @@
 				fetchError = err.message;
 			});
 
+		measurements = measurements.map((m) => {
+			return {
+				...m,
+				group: flags.getLabelFromValue(m.measurementType)
+			};
+		});
+
+		// force redraw
+		measurements = [...measurements];
+
 		isLoading = false;
 	}
 
@@ -41,17 +57,12 @@
 			title,
 			height: '100%',
 			width: '100%',
-			data: { groupMapsTo: 'measurementType', loading: isLoading },
+			data: { loading: isLoading },
 			curve: 'curveMonotoneX',
 			points: { radius: 0 },
 			axes: {
 				left: { mapsTo: 'value', scaleType: ScaleTypes.LINEAR, title: 'Wert' },
 				bottom: { mapsTo: 'time', scaleType: ScaleTypes.TIME, title: 'Datum' }
-			},
-			zoomBar: {
-				top: {
-					enabled: true
-				}
 			},
 			toolbar: {
 				enabled: true,
@@ -84,7 +95,7 @@
 
 		if (refreshInterval > 0) {
 			interval = setInterval(() => {
-				fetchMeasurements();
+				fetchMeasurements(true);
 			}, refreshInterval * 1000);
 		}
 	});
