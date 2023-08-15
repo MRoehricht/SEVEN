@@ -67,9 +67,8 @@
 		fetchProbes();
 	}
 
-	function openEditModal(probe: DataTableRow) {
+	function setSelectedProbe(probe: DataTableRow) {
 		selectedProbe = <Probe>probe;
-		showAddPanelModal = true;
 	}
 </script>
 
@@ -104,10 +103,18 @@
 					<OverflowMenuItem
 						text="Bearbeiten"
 						on:click={() => {
-							openEditModal(row);
+							setSelectedProbe(row);
+							showAddPanelModal = true;
 						}}
 					/>
-					<OverflowMenuItem danger text="Löschen" on:click={() => (showDeleteModal = true)} />
+					<OverflowMenuItem
+						danger
+						text="Löschen"
+						on:click={() => {
+							setSelectedProbe(row);
+							showDeleteModal = true;
+						}}
+					/>
 				</OverflowMenu>
 			{:else}{cell.value}{/if}
 		</svelte:fragment>
