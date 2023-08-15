@@ -29,7 +29,8 @@
 			headers: { 'Content-Type': 'application/json', accept: '*/*' },
 			body: JSON.stringify({
 				probeId: probeId,
-				type: Number(measurementType)
+				type: Number(measurementType),
+				ReduceData: true
 			})
 		};
 		measurements = await fetch(`${env.PUBLIC_API_URL}/measurement/filter`, options)

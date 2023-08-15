@@ -7,4 +7,5 @@ public class MeasurementFilter
     public int? Month { get; set; }
     public int? Day { get; set; }
     public MeasurementType? Type { get; set; }
+    public bool? ReduceData { get; set; }
 }
