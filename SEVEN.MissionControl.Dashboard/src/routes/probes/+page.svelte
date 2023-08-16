@@ -25,7 +25,6 @@
 	let fetchError = '';
 	let probes: Probe[] = [];
 	let selectedProbe: Probe | null = null;
-
 	let showAddPanelModal = false;
 	let showDeleteModal = false;
 
