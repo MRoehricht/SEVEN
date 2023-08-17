@@ -23,7 +23,8 @@
 		Microservices_1,
 		UserAvatarFilledAlt,
 		AgricultureAnalytics,
-		TouchInteraction
+		TouchInteraction,
+		Query
 	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
@@ -91,6 +92,12 @@
 				text="Aktoren"
 				href="/actuators"
 				isSelected={path?.endsWith('/actuators')}
+			/>
+			<SideNavLink
+				icon={Query}
+				text="DQL-Inspector"
+				href="/dql-inspector"
+				isSelected={path?.endsWith('/dql-inspector')}
 			/>
 		</SideNavItems>
 	</SideNav>

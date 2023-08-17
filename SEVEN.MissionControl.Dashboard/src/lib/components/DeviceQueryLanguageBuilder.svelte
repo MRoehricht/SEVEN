@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { ClickableTile, Popover, TextArea, TextInput } from 'carbon-components-svelte';
+	import { Button, TextInput } from 'carbon-components-svelte';
+	import { Play } from 'carbon-icons-svelte';
 
 	type Token = {
 		type: 'property' | 'operator' | 'logical' | 'value';
@@ -147,6 +148,36 @@
 				});
 			}
 		}
+
+		if (tokens.length > 0 && tokens[tokens.length - 1].type === 'property') {
+			validationErrors.push({
+				message: `Expected a operator after property at position ${
+					tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+				}`,
+				indexStart: tokens[tokens.length - 1].index,
+				indexEnd: tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+			});
+		}
+
+		if (tokens.length > 0 && tokens[tokens.length - 1].type === 'operator') {
+			validationErrors.push({
+				message: `Expected a value after operator at position ${
+					tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+				}`,
+				indexStart: tokens[tokens.length - 1].index,
+				indexEnd: tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+			});
+		}
+
+		if (tokens.length > 0 && tokens[tokens.length - 1].type === 'logical') {
+			validationErrors.push({
+				message: `Expected a property after logical operator at position ${
+					tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+				}`,
+				indexStart: tokens[tokens.length - 1].index,
+				indexEnd: tokens[tokens.length - 1].index + tokens[tokens.length - 1].value.length
+			});
+		}
 	}
 
 	function updateSuggestions(tokens: Token[]) {
@@ -181,26 +212,24 @@
 			suggestions = properties;
 		}
 	}
+
+	function checkQuery() {
+		if (invalidInput) alert('Query invalid');
+		else alert('Query valid');
+	}
 </script>
 
-<div style:position="relative">
-	<TextInput
-		inline
-		labelText="DQL Query"
-		placeholder="Enter a DQL query"
-		bind:value
-		bind:invalid={invalidInput}
-		bind:invalidText={invalidInputMessage}
-	/>
-	<!-- <Popover open={suggestions.length > 0} align="bottom-left">
-		{#each suggestions as suggestion}
-			<ClickableTile>
-				<div class="flex-column">
-					<span>{suggestion}</span>
-				</div>
-			</ClickableTile>
-		{/each}
-	</Popover> -->
+<div>
+	<div class="query-input">
+		<TextInput
+			placeholder="Enter a DQL query"
+			bind:value
+			bind:invalid={invalidInput}
+			bind:invalidText={invalidInputMessage}
+		/>
+		<Button iconDescription="Execute query" icon={Play} on:click={checkQuery} />
+	</div>
+
 	<div class="grid-row pt-4">
 		<div>
 			<p>Tokens</p>
@@ -227,8 +256,11 @@
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 
-	.flex-column {
+	.query-input {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		align-items: center;
+		margin-top: 6px;
+		gap: 6px;
 	}
 </style>

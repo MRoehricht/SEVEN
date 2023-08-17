@@ -13,7 +13,7 @@
 				<BreadcrumbItem href={crumb.path}>{crumb.label}</BreadcrumbItem>
 			{/each}
 		</Breadcrumb>
-		<h4>{title}</h4>
+		<h4 class="toolbar-heading">{title}</h4>
 	</div>
 	<div class="toolbar-actions">
 		<slot />
@@ -33,5 +33,9 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
+	}
+
+	.toolbar-heading {
+		margin-top: 6px;
 	}
 </style>
