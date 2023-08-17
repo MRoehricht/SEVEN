@@ -20,6 +20,7 @@
 	import { Button, Modal, TextInput } from 'carbon-components-svelte';
 	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
 	import { onMount } from 'svelte';
+	import AutoCompleteQueryInput from '$lib/components/AutoCompleteQueryInput.svelte';
 
 	let isLoading = true;
 	let fetchError = '';
@@ -44,3 +45,5 @@
 		{ label: 'Aktoren', path: '/actuators' }
 	]}
 />
+
+<AutoCompleteQueryInput />
