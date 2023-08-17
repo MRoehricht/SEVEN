@@ -2,25 +2,9 @@
 	import 'carbon-components-svelte/css/all.css';
 	import '@carbon/styles/css/styles.css';
 	import '@carbon/charts-svelte/styles.css';
-	import AddProbeModal from '$lib/components/AddProbeModal.svelte';
 	import type { Probe } from '$lib/types';
-	import { env } from '$env/dynamic/public';
 	import DashboardToolbar from '$lib/components/DashboardToolbar.svelte';
-	import {
-		DataTable,
-		OverflowMenu,
-		OverflowMenuItem,
-		DataTableSkeleton,
-		Toolbar,
-		ToolbarContent,
-		ToolbarMenu,
-		ToolbarMenuItem,
-		ToolbarSearch
-	} from 'carbon-components-svelte';
-	import { Button, Modal, TextInput } from 'carbon-components-svelte';
-	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
-	import { onMount } from 'svelte';
-	import AutoCompleteQueryInput from '$lib/components/AutoCompleteQueryInput.svelte';
+	import DeviceQueryLanguageBuilder from '$lib/components/DeviceQueryLanguageBuilder.svelte';
 
 	let isLoading = true;
 	let fetchError = '';
@@ -46,4 +30,4 @@
 	]}
 />
 
-<AutoCompleteQueryInput />
+<DeviceQueryLanguageBuilder />
