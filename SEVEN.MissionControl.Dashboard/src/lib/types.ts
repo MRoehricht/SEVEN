@@ -49,8 +49,13 @@ export const measurementTypeLabels: Record<MeasurementType, string> = {
 	[MeasurementType.SwitchingState]: 'Switching State'
 };
 
-export type Token = {
+export type DqlToken = {
 	type: 'property' | 'operator' | 'logical' | 'value';
 	value: string;
 	index: number;
+};
+
+export type DqlProperty = {
+	propertyName: string;
+	propertyValues: string[];
 };

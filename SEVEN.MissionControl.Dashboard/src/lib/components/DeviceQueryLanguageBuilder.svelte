@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Token } from '$lib/types';
+	import type { DqlProperty, DqlToken } from '$lib/types';
 	import { Button, Checkbox, TextInput } from 'carbon-components-svelte';
 	import { Play } from 'carbon-icons-svelte';
 
@@ -9,17 +9,10 @@
 		indexEnd: number;
 	};
 
-	let properties = ['MeasurementType', 'ProbeId', 'Time'];
-	let propertySuggestions: Record<string, string[]> = {
-		MeasurementType: ['64', '128'],
-		ProbeId: ['123', '456'],
-		Time: ['2021-01-01', '2021-01-02']
-	};
-
 	let operators = ['==', '!=', '>', '<', '>=', '<='];
-	let logicals = ['AND', 'OR', 'NOT'];
+	let logicals = ['AND', 'OR'];
 
-	let tokens: Token[] = [];
+	let tokens: DqlToken[] = [];
 	let suggestions: string[] = [];
 	let value: string = '';
 	let invalidInput: boolean = false;
@@ -55,7 +48,7 @@
 		words.forEach((token) => {
 			const index = value.indexOf(token, currentIndex);
 
-			if (properties.includes(token)) {
+			if (dqlProperties.some((p) => p.propertyName === token)) {
 				tokens.push({
 					type: 'property',
 					value: token,
@@ -79,7 +72,11 @@
 				});
 			}
 
-			if (!properties.includes(token) && !operators.includes(token) && !logicals.includes(token)) {
+			if (
+				!dqlProperties.some((p) => p.propertyName === token) &&
+				!operators.includes(token) &&
+				!logicals.includes(token)
+			) {
 				tokens.push({
 					type: 'value',
 					value: token,
@@ -178,13 +175,13 @@
 		}
 	}
 
-	function updateSuggestions(tokens: Token[]) {
+	function updateSuggestions(tokens: DqlToken[]) {
 		let lastToken = tokens[tokens.length - 1];
 
 		suggestions = [];
 
 		if (!lastToken) {
-			suggestions = properties;
+			suggestions = dqlProperties.map((p) => p.propertyName).flat();
 			return;
 		}
 
@@ -194,20 +191,25 @@
 			suggestions = operators;
 		} else if (lastToken.type === 'operator') {
 			if (prevToken.type === 'property') {
-				suggestions = propertySuggestions[prevToken.value];
+				suggestions = dqlProperties
+					.filter((p) => p.propertyName === prevToken.value)
+					.map((p) => p.propertyValues)
+					.flat();
 			}
 		} else if (lastToken.type === 'value') {
 			if (prevToken && prevToken.type === 'operator') {
 				suggestions = logicals;
 			}
 
-			let matchingProperties = properties.filter((property) => property.includes(lastToken.value));
+			let matchingProperties = dqlProperties.filter((p) =>
+				p.propertyName.includes(lastToken.value)
+			);
 
 			if (matchingProperties.length > 0) {
-				suggestions = matchingProperties;
+				suggestions = matchingProperties.map((p) => p.propertyName).flat();
 			}
 		} else if (lastToken.type === 'logical') {
-			suggestions = properties;
+			suggestions = dqlProperties.map((p) => p.propertyName).flat();
 		}
 	}
 
@@ -216,7 +218,12 @@
 		else onExecuteQuery(tokens);
 	}
 
-	export let onExecuteQuery: (tokens: Token[]) => void;
+	$: {
+		console.log(dqlProperties);
+	}
+
+	export let dqlProperties: DqlProperty[];
+	export let onExecuteQuery: (tokens: DqlToken[]) => void;
 </script>
 
 <div>
@@ -226,6 +233,12 @@
 			bind:value
 			bind:invalid={invalidInput}
 			bind:invalidText={invalidInputMessage}
+			on:focus={() => {
+				updateSuggestions(tokens);
+			}}
+			on:blur={() => {
+				suggestions = [];
+			}}
 		/>
 		<div class="query-input">
 			<Button iconDescription="Execute query" icon={Play} on:click={checkQuery} />
