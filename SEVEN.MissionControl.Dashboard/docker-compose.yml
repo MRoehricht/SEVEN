@@ -7,38 +7,38 @@ volumes:
   seven-data:
 
 services:
-  seven-missioncontrol-dashboard:
-    image: ghcr.io/mroehricht/seven/seven.missioncontrol-dashboard:latest
-    ports:
-      - 3000:3000
-    environment:
-      - ORIGIN=https://seven.reedsoft.de
-      - AUTH_SECRET=8212a37e513c35e771d27d7480975236
-      - AUTH_URL=https://seven.reedsoft.de
-      - GITHUB_ID=5f2793135203a90fe036
-      - GITHUB_SECRET=18c29354f0f2e6c270197aa99485bc4f1c9fd39c
-      - PUBLIC_API_URL=https://api.seven.reedsoft.de
-    restart: always
-    networks:
-      - seven-network
-  seven-missioncontrol-api:
-    image: ghcr.io/mroehricht/seven/seven.missioncontrol-api:latest
-    ports:
-      - 5009:80
-    environment:
-      - DB_HOST=seven-postgres
-      - DB_PORT=5432
-      - DB_DB=seven
-      - DB_USER=seven
-      - DB_PASSWORD=seven
-      - ALLOWED_ORIGINS=https://seven.reedsoft.de
-      - API_KEY=G9ZlCxw4dAwIH1a1K4uQLcZnsk4txEvr
-    restart: always
-    networks:
-      - seven-network
-    depends_on:
-      seven-postgres:
-        condition: service_healthy
+  # seven-missioncontrol-dashboard:
+  #   image: ghcr.io/mroehricht/seven/seven.missioncontrol-dashboard:latest
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     - ORIGIN=https://seven.reedsoft.de
+  #     - AUTH_SECRET=8212a37e513c35e771d27d7480975236
+  #     - AUTH_URL=https://seven.reedsoft.de
+  #     - GITHUB_ID=5f2793135203a90fe036
+  #     - GITHUB_SECRET=18c29354f0f2e6c270197aa99485bc4f1c9fd39c
+  #     - PUBLIC_API_URL=https://api.seven.reedsoft.de
+  #   restart: always
+  #   networks:
+  #     - seven-network
+  # seven-missioncontrol-api:
+  #   image: ghcr.io/mroehricht/seven/seven.missioncontrol-api:latest
+  #   ports:
+  #     - 5009:80
+  #   environment:
+  #     - DB_HOST=seven-postgres
+  #     - DB_PORT=5432
+  #     - DB_DB=seven
+  #     - DB_USER=seven
+  #     - DB_PASSWORD=seven
+  #     - ALLOWED_ORIGINS=https://seven.reedsoft.de
+  #     - API_KEY=G9ZlCxw4dAwIH1a1K4uQLcZnsk4txEvr
+  #   restart: always
+  #   networks:
+  #     - seven-network
+  #   depends_on:
+  #     seven-postgres:
+  #       condition: service_healthy
   seven-postgres:
     image: postgres:latest
     volumes:

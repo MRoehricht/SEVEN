@@ -1,12 +1,7 @@
 <script lang="ts">
-	import { Button, TextInput } from 'carbon-components-svelte';
+	import type { Token } from '$lib/types';
+	import { Button, Checkbox, TextInput } from 'carbon-components-svelte';
 	import { Play } from 'carbon-icons-svelte';
-
-	type Token = {
-		type: 'property' | 'operator' | 'logical' | 'value';
-		value: string;
-		index: number;
-	};
 
 	type ValidationError = {
 		message: string;
@@ -14,10 +9,11 @@
 		indexEnd: number;
 	};
 
-	let properties = ['MeasurementType', 'ProbeId'];
+	let properties = ['MeasurementType', 'ProbeId', 'Time'];
 	let propertySuggestions: Record<string, string[]> = {
 		MeasurementType: ['64', '128'],
-		ProbeId: ['123', '456']
+		ProbeId: ['123', '456'],
+		Time: ['2021-01-01', '2021-01-02']
 	};
 
 	let operators = ['==', '!=', '>', '<', '>=', '<='];
@@ -29,6 +25,8 @@
 	let invalidInput: boolean = false;
 	let invalidInputMessage: string = '';
 	let validationErrors: ValidationError[] = [];
+
+	let showDebugInfo: boolean = false;
 
 	$: {
 		tokenize(value);
@@ -215,8 +213,10 @@
 
 	function checkQuery() {
 		if (invalidInput) alert('Query invalid');
-		else alert('Query valid');
+		else onExecuteQuery(tokens);
 	}
+
+	export let onExecuteQuery: (tokens: Token[]) => void;
 </script>
 
 <div>
@@ -227,23 +227,28 @@
 			bind:invalid={invalidInput}
 			bind:invalidText={invalidInputMessage}
 		/>
-		<Button iconDescription="Execute query" icon={Play} on:click={checkQuery} />
+		<div class="query-input">
+			<Button iconDescription="Execute query" icon={Play} on:click={checkQuery} />
+			<Checkbox labelText="Debug" bind:checked={showDebugInfo} />
+		</div>
 	</div>
 
-	<div class="grid-row pt-4">
-		<div>
-			<p>Tokens</p>
-			<pre>{JSON.stringify(tokens, null, 2)}</pre>
+	{#if showDebugInfo}
+		<div class="grid-row pt-4">
+			<div>
+				<p>Tokens</p>
+				<pre>{JSON.stringify(tokens, null, 2)}</pre>
+			</div>
+			<div>
+				<p>Suggestions</p>
+				<pre>{JSON.stringify(suggestions, null, 2)}</pre>
+			</div>
+			<div>
+				<p>Errors</p>
+				<pre>{JSON.stringify(validationErrors, null, 2)}</pre>
+			</div>
 		</div>
-		<div>
-			<p>Suggestions</p>
-			<pre>{JSON.stringify(suggestions, null, 2)}</pre>
-		</div>
-		<div>
-			<p>Errors</p>
-			<pre>{JSON.stringify(validationErrors, null, 2)}</pre>
-		</div>
-	</div>
+	{/if}
 </div>
 
 <style>

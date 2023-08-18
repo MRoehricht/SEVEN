@@ -48,3 +48,9 @@ export const measurementTypeLabels: Record<MeasurementType, string> = {
 	[MeasurementType.SoilMoisture]: 'Soil Moisture',
 	[MeasurementType.SwitchingState]: 'Switching State'
 };
+
+export type Token = {
+	type: 'property' | 'operator' | 'logical' | 'value';
+	value: string;
+	index: number;
+};
