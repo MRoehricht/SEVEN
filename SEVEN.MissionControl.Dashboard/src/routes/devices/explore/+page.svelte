@@ -7,6 +7,7 @@
 	import DeviceQueryLanguageBuilder from '$lib/components/DeviceQueryLanguageBuilder.svelte';
 	import { env } from '$env/dynamic/public';
 	import { onMount } from 'svelte';
+	import { DataTable } from 'carbon-components-svelte';
 
 	let isLoading = false;
 	let fetchError = '';
@@ -42,6 +43,7 @@
 		dqlProperties = await fetch(`${env.PUBLIC_API_URL}/device/dql/properties`, options)
 			.then((res) => res.json())
 			.catch((err) => {
+				console.log(err);
 				fetchError = err.message;
 			});
 
@@ -69,11 +71,17 @@
 {:else if fetchError}
 	<div>{fetchError}</div>
 {:else if measurements.length > 0}
-	<div>
-		{#each measurements as measurement}
-			<div>{JSON.stringify(measurement, null, 2)}</div>
-		{/each}
-	</div>
+	<DataTable
+		headers={[
+			{ key: 'id', value: 'ID' },
+			{ key: 'probeId', value: 'ProbeId' },
+			{ key: 'measurementType', value: 'MeasurementType' },
+			{ key: 'value', value: 'Value' },
+			{ key: 'time', value: 'Time' },
+			{ key: 'localTime', value: 'Local Time' }
+		]}
+		rows={measurements}
+	/>
 {:else}
 	<div>No results</div>
 {/if}

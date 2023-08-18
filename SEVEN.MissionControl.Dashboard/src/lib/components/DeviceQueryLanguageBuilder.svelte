@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { DqlProperty, DqlToken } from '$lib/types';
-	import { Button, Checkbox, TextInput } from 'carbon-components-svelte';
+	import { Button, Checkbox, Popover, TextInput, Tile } from 'carbon-components-svelte';
 	import { Play } from 'carbon-icons-svelte';
+	import { onMount } from 'svelte';
 
 	type ValidationError = {
 		message: string;
@@ -14,12 +15,10 @@
 
 	let tokens: DqlToken[] = [];
 	let suggestions: string[] = [];
+	let suggestionsOpen: boolean = false;
 	let value: string = '';
 	let invalidInput: boolean = false;
-	let invalidInputMessage: string = '';
 	let validationErrors: ValidationError[] = [];
-
-	let showDebugInfo: boolean = false;
 
 	$: {
 		tokenize(value);
@@ -28,14 +27,10 @@
 
 		if (validationErrors.length == 1) {
 			invalidInput = true;
-			invalidInputMessage = validationErrors[0].message;
 		} else if (validationErrors.length > 0) {
 			invalidInput = true;
-			invalidInputMessage =
-				'More than one error occurred. Please check the error list for more information.';
 		} else {
 			invalidInput = false;
-			invalidInputMessage = '';
 		}
 	}
 
@@ -211,15 +206,8 @@
 		} else if (lastToken.type === 'logical') {
 			suggestions = dqlProperties.map((p) => p.propertyName).flat();
 		}
-	}
 
-	function checkQuery() {
-		if (invalidInput) alert('Query invalid');
-		else onExecuteQuery(tokens);
-	}
-
-	$: {
-		console.log(dqlProperties);
+		suggestionsOpen = suggestions.length > 0;
 	}
 
 	export let dqlProperties: DqlProperty[];
@@ -228,57 +216,59 @@
 
 <div>
 	<div class="query-input">
-		<TextInput
-			placeholder="Enter a DQL query"
-			bind:value
-			bind:invalid={invalidInput}
-			bind:invalidText={invalidInputMessage}
-			on:focus={() => {
-				updateSuggestions(tokens);
-			}}
-			on:blur={() => {
-				suggestions = [];
-			}}
+		<div class="query-tooltip">
+			<TextInput
+				placeholder="Enter a DQL query"
+				bind:value
+				bind:invalid={invalidInput}
+				on:focus={() => {
+					updateSuggestions(tokens);
+				}}
+				on:blur={() => {
+					suggestions = [];
+				}}
+			/>
+			<Popover open align="bottom-left">
+				{#each validationErrors as error}
+					<div class="popover-item error">{error.message}</div>
+				{/each}
+				{#each suggestions as suggestion}
+					<div class="popover-item">{suggestion}</div>
+				{/each}
+			</Popover>
+		</div>
+		<Button
+			iconDescription="Execute query"
+			icon={Play}
+			on:click={() => onExecuteQuery(tokens)}
+			size="field"
+			disabled={invalidInput}
 		/>
-		<div class="query-input">
-			<Button iconDescription="Execute query" icon={Play} on:click={checkQuery} />
-			<Checkbox labelText="Debug" bind:checked={showDebugInfo} />
-		</div>
 	</div>
-
-	{#if showDebugInfo}
-		<div class="grid-row pt-4">
-			<div>
-				<p>Tokens</p>
-				<pre>{JSON.stringify(tokens, null, 2)}</pre>
-			</div>
-			<div>
-				<p>Suggestions</p>
-				<pre>{JSON.stringify(suggestions, null, 2)}</pre>
-			</div>
-			<div>
-				<p>Errors</p>
-				<pre>{JSON.stringify(validationErrors, null, 2)}</pre>
-			</div>
-		</div>
-	{/if}
 </div>
 
 <style>
-	.pt-4 {
-		padding-top: 1rem;
-	}
-
-	.grid-row {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-	}
-
 	.query-input {
 		display: flex;
 		flex-direction: row;
-		align-items: center;
 		margin-top: 6px;
 		gap: 6px;
+	}
+
+	.query-tooltip {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+
+	.popover-item {
+		padding: 12px;
+		width: 100%;
+	}
+
+	.error {
+		color: white;
+		background-color: lightcoral;
 	}
 </style>
