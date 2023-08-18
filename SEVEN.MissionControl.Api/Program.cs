@@ -114,4 +114,5 @@ app.MapGroup("/rover").RoverGroup();
 app.MapGroup("/tasks").RoverTaskGroup();
 app.MapGroup("/probe").ProbeGroup();
 app.MapGroup("/measurement").MeasurementGroup();
+app.MapGroup("/device").DeviceGroup();
 app.Run();
