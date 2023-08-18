@@ -16,7 +16,9 @@
 		HeaderPanelLink,
 		HeaderPanelLinks,
 		HeaderUtilities,
-		HeaderActionLink
+		HeaderActionLink,
+		SideNavMenu,
+		SideNavMenuItem
 	} from 'carbon-components-svelte';
 	import {
 		DocumentTasks,
@@ -24,7 +26,8 @@
 		UserAvatarFilledAlt,
 		AgricultureAnalytics,
 		TouchInteraction,
-		Query
+		Query,
+		Chip
 	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
@@ -75,12 +78,6 @@
 				href="/"
 				isSelected={path === '/'}
 			/>
-			<!--<SideNavLink
-				icon={DocumentTasks}
-				text="Rovertasks"
-				href="/tasks"
-				isSelected={path?.endsWith('/tasks')}
-			/>-->
 			<SideNavLink
 				icon={Microservices_1}
 				text="Sonden"
@@ -93,12 +90,13 @@
 				href="/actuators"
 				isSelected={path?.endsWith('/actuators')}
 			/>
-			<SideNavLink
-				icon={Query}
-				text="DQL-Inspector"
-				href="/dql-inspector"
-				isSelected={path?.endsWith('/dql-inspector')}
-			/>
+			<SideNavMenu text="Devices" icon={Chip}>
+				<SideNavMenuItem
+					href="/devices/explore"
+					text="Explore"
+					isSelected={path?.endsWith('/devices/explore')}
+				/>
+			</SideNavMenu>
 		</SideNavItems>
 	</SideNav>
 {/if}

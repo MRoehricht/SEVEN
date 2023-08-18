@@ -30,10 +30,11 @@
 </script>
 
 <DashboardToolbar
-	title="DQL-Inspector"
+	title="Explore"
 	crumbs={[
 		{ label: 'Home', path: '/' },
-		{ label: 'DQL-Inspector', path: '/dql-inspector' }
+		{ label: 'Devices', path: '/devices' },
+		{ label: 'Explore', path: '/devices/explore' }
 	]}
 />
 
