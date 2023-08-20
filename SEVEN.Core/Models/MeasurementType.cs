@@ -10,6 +10,7 @@ public enum MeasurementType
     Humidity = 8,
     UvRadiation = 16,
     LightIntensity = 32,
-    SoilMoisture= 64,
-    SwitchingState= 128
+    SoilMoisture = 64,
+    SwitchingState = 128,
+	AirPressure = 256
 }

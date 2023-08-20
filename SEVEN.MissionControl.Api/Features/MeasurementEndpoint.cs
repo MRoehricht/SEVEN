@@ -22,7 +22,7 @@ public static class MeasurementEndpoint
     private static async Task<IResult> GetMeasurements(IMeasurementRepository repository)
     {
         var measurements = await repository.GetMeasurements();
-        return Results.Ok(measurements);
+        return Results.Ok(measurements); 
     }
 
     private static async Task<IResult> GetLastMeasurement(Guid probeId, IMeasurementRepository repository)

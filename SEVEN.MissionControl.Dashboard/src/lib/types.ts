@@ -34,7 +34,8 @@ export enum MeasurementType {
 	UvRadiation = 16,
 	LightIntensity = 32,
 	SoilMoisture = 64,
-	SwitchingState = 128
+	SwitchingState = 128,
+	AirPressure = 256,
 }
 
 export const measurementTypeLabels: Record<MeasurementType, string> = {
@@ -46,7 +47,8 @@ export const measurementTypeLabels: Record<MeasurementType, string> = {
 	[MeasurementType.UvRadiation]: 'UV Radiation',
 	[MeasurementType.LightIntensity]: 'Light Intensity',
 	[MeasurementType.SoilMoisture]: 'Soil Moisture',
-	[MeasurementType.SwitchingState]: 'Switching State'
+	[MeasurementType.SwitchingState]: 'Switching State',
+	[MeasurementType.AirPressure]: 'Air Pressure'
 };
 
 export type DqlToken = {

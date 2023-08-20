@@ -173,7 +173,8 @@ class BME280:
     @property
     def temperature(self):
         t, p, h = self.read_compensated_data()
-        return ("{}C".format(t / 100))
+        """ Mit Einheit:  return ("{}C".format(t / 100))""" 
+        return ("{}".format(t / 100))
 
     @property
     def airpressure(self):
@@ -183,8 +184,8 @@ class BME280:
         p = p // 256
         pi = p // 100
         pd = p - pi * 100
- 
-        return ("{}.{:02d}hPa".format(pi, pd))
+        """ Mit Einheit:  return ("{}.{:02d}hPa".format(pi, pd))""" 
+        return ("{}.{:02d}".format(pi, pd))
     
     @property
     def humidity(self):
@@ -193,4 +194,6 @@ class BME280:
  
         hi = h // 1024
         hd = h * 100 // 1024 - hi * 100
-        return ("{}.{:02d}%".format(hi, hd))
+        """ Mit Einheit:  return ("{}.{:02d}%".format(hi, hd))""" 
+        return ("{}.{:02d}".format(hi, hd))
+
