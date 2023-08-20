@@ -2,7 +2,8 @@ name: CI Build and publish API
 on:
   push:
     paths:
-      - 'SEVEN.MissionControl.Api/**'           
+      - 'SEVEN.MissionControl.Api/**'
+      - 'SEVEN.Core/**'
 jobs:
   docker:
     runs-on: ubuntu-latest
