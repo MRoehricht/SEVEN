@@ -51,7 +51,7 @@ public static class MeasurementEndpoint
         if (filter.Type.HasValue)
             measurements = measurements.Where(_ => _.MeasurementType == (filter.Type.Value));
 
-        if (filter.ReduceData.HasValue)
+        if (filter.ReduceData.HasValue && filter.ReduceData.Value)
             measurements = ReduceDataService.ReduceData(measurements);
 
         return Results.Ok(measurements);
