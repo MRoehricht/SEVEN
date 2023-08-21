@@ -3,7 +3,6 @@ using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Contexts;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 using SEVEN.MissionControl.Api.Models.EventSystem;
-using SEVEN.MissionControl.Api.Services;
 using SEVEN.MissionControl.Api.Services.EventSystem;
 
 namespace SEVEN.MissionControl.Api.Data.Repositories;
@@ -45,5 +44,15 @@ public class MeasurementRepository : IMeasurementRepository
         await _context.SaveChangesAsync();
         _eventPublisher.Raise(new ProbeChangedEventMessage{Value = measurement.Value, TargetId = probe.Id});
         return measurement;
+    }
+
+    public async Task<bool> DeleteMeasurement(Guid measurementId)
+    {
+        var measurement = await _context.Measurements.FindAsync(measurementId);
+        if (measurement is null) return false;
+        
+        _context.Measurements.Remove(measurement);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

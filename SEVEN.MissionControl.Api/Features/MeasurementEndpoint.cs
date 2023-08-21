@@ -16,6 +16,7 @@ public static class MeasurementEndpoint
         group.MapGet("/lastMeasurement", GetLastMeasurement).WithName("GetLastMeasurement").WithOpenApi();
         group.MapGet("/create/{message}", CreateMessages).WithName("CreateMessages").WithOpenApi();
         group.MapPost("/", PostMeasurement).WithName("PostMeasurement").WithOpenApi();
+        group.MapDelete("/", DeleteMeasurement).WithName("DeleteMeasurement").WithOpenApi();
         return group;
     }
 
@@ -73,4 +74,11 @@ public static class MeasurementEndpoint
         var dbMeasurement = await repository.CreateMeasurement(measurement);
         return dbMeasurement != null ? Results.Ok(dbMeasurement) : Results.NotFound();
     }
+    
+    private static async Task<IResult> DeleteMeasurement(Guid id, IMeasurementRepository repository)
+    {
+        var isMeasurementDeleted = await repository.DeleteMeasurement(id);
+        return isMeasurementDeleted ? Results.NoContent() : Results.NotFound();
+    }
+    
 }
