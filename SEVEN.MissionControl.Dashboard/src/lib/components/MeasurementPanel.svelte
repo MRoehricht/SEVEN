@@ -19,6 +19,13 @@
 	let fetchError = '';
 	let lastUpdated = new Date();
 	let measurements: MeasurementWithGroup[] = [];
+	let reduceData = true;
+	let reduceDataText = '';
+
+	function toggleReduceData() {
+		reduceData = !reduceData;
+		fetchMeasurements();
+	}
 
 	async function fetchMeasurements(ignoreLoading = false) {
 		if (!ignoreLoading) {
@@ -31,7 +38,7 @@
 			body: JSON.stringify({
 				probeId: probeId,
 				type: Number(measurementType),
-				ReduceData: true
+				ReduceData: reduceData
 			})
 		};
 		measurements = await fetch(`${env.PUBLIC_API_URL}/measurement/filter`, options)
@@ -87,6 +94,14 @@
 						clickFunction: () => {
 							fetchMeasurements();
 						}
+					},
+					{
+						type: ToolbarControlTypes.CUSTOM,
+						title: reduceDataText,
+						text: reduceDataText,
+						clickFunction: () => {
+							toggleReduceData();
+						}
 					}
 				]
 			}
@@ -108,6 +123,10 @@
 	onDestroy(() => {
 		clearInterval(interval);
 	});
+
+	$: {
+		reduceDataText = reduceData ? 'Alle Daten anzeigen' : 'Daten reduzieren';
+	}
 </script>
 
 <Tile class="dashboard-tile">
