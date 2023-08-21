@@ -54,7 +54,7 @@ public static class MeasurementEndpoint
         if (filter.ReduceData.HasValue && filter.ReduceData.Value)
             measurements = ReduceDataService.ReduceData(measurements);
 
-        return Results.Ok(measurements);
+        return Results.Ok(measurements.OrderBy(_ => _.Time));
     }
 
     private static async Task<IResult> CreateMessages(string? message, IMeasurementRepository repository)
