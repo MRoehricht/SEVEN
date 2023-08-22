@@ -8,6 +8,7 @@
 	import { env } from '$env/dynamic/public';
 	import { onMount } from 'svelte';
 	import { DataTable } from 'carbon-components-svelte';
+	import DqlBuilder from '$lib/components/DqlBuilder.svelte';
 
 	let isLoading = false;
 	let fetchError = '';
@@ -64,6 +65,7 @@
 	]}
 />
 
+<DqlBuilder />
 <DeviceQueryLanguageBuilder bind:dqlProperties onExecuteQuery={executeDql} />
 
 {#if isLoading}

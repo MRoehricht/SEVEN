@@ -18,7 +18,8 @@
 		HeaderUtilities,
 		HeaderActionLink,
 		SideNavMenu,
-		SideNavMenuItem
+		SideNavMenuItem,
+		SideNavDivider
 	} from 'carbon-components-svelte';
 	import {
 		DocumentTasks,
@@ -27,7 +28,8 @@
 		AgricultureAnalytics,
 		TouchInteraction,
 		Query,
-		Chip
+		Chip,
+		Explore
 	} from 'carbon-icons-svelte';
 
 	import '@carbon/styles/css/styles.css';
@@ -90,13 +92,19 @@
 				href="/actuators"
 				isSelected={path?.endsWith('/actuators')}
 			/>
-			<SideNavMenu text="Devices" icon={Chip}>
-				<SideNavMenuItem
-					href="/devices/explore"
-					text="Explore"
-					isSelected={path?.endsWith('/devices/explore')}
-				/>
-			</SideNavMenu>
+			<SideNavDivider />
+			<SideNavLink
+				icon={Chip}
+				text="Geräte"
+				href="/devices"
+				isSelected={path?.endsWith('/devices')}
+			/>
+			<SideNavLink
+				icon={Explore}
+				text="Explore"
+				href="/devices/explore"
+				isSelected={path?.endsWith('/devices/explore')}
+			/>
 		</SideNavItems>
 	</SideNav>
 {/if}
