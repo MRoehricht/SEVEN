@@ -65,8 +65,8 @@
 	]}
 />
 
-<DqlBuilder />
-<DeviceQueryLanguageBuilder bind:dqlProperties onExecuteQuery={executeDql} />
+<DqlBuilder bind:dqlProperties onExecuteQuery={executeDql} />
+<!-- <DeviceQueryLanguageBuilder bind:dqlProperties onExecuteQuery={executeDql} /> -->
 
 {#if isLoading}
 	<div>Loading...</div>

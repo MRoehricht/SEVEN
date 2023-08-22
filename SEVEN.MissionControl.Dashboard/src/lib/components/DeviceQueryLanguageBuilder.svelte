@@ -45,6 +45,7 @@
 
 			if (dqlProperties.some((p) => p.propertyName === token)) {
 				tokens.push({
+					id: '',
 					type: 'property',
 					value: token,
 					index
@@ -53,6 +54,7 @@
 
 			if (operators.includes(token)) {
 				tokens.push({
+					id: '',
 					type: 'operator',
 					value: token,
 					index
@@ -61,6 +63,7 @@
 
 			if (logicals.includes(token)) {
 				tokens.push({
+					id: '',
 					type: 'logical',
 					value: token,
 					index
@@ -73,6 +76,7 @@
 				!logicals.includes(token)
 			) {
 				tokens.push({
+					id: '',
 					type: 'value',
 					value: token,
 					index

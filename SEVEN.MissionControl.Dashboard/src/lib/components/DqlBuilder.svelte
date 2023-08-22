@@ -1,5 +1,8 @@
 <script lang="ts">
-	import type { DqlToken } from '$lib/types';
+	import type { DqlProperty, DqlToken } from '$lib/types';
+	import { Button, Popover } from 'carbon-components-svelte';
+	import { Play } from 'carbon-icons-svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	type DqlTokenGroup = {
 		type: 'form' | 'logical';
@@ -7,6 +10,15 @@
 	};
 
 	let whereTokens: DqlTokenGroup[] = [];
+	let suggestions: string[] = [];
+	let selectedToken: string | null = null;
+	let needsRerender: Date = new Date();
+
+	let operators = ['==', '!=', '>', '<', '>=', '<='];
+	let logicals = ['AND', 'OR'];
+
+	export let dqlProperties: DqlProperty[];
+	export let onExecuteQuery: (tokens: DqlToken[]) => void;
 
 	function addDefaultWhereTokens() {
 		let newTokens = [] as DqlTokenGroup[];
@@ -14,18 +26,21 @@
 			type: 'form',
 			tokens: [
 				{
+					id: uuidv4(),
 					type: 'property',
-					value: 'id',
+					value: dqlProperties[0].propertyName,
 					index: 0
 				},
 				{
+					id: uuidv4(),
 					type: 'operator',
-					value: '==',
+					value: operators[0],
 					index: 0
 				},
 				{
+					id: uuidv4(),
 					type: 'value',
-					value: '123',
+					value: 'placeholder',
 					index: 0
 				}
 			]
@@ -38,6 +53,7 @@
 				type: 'logical',
 				tokens: [
 					{
+						id: uuidv4(),
 						type: 'operator',
 						value: 'AND',
 						index: 0
@@ -50,34 +66,198 @@
 		whereTokens = [...whereTokens, ...newTokens];
 	}
 
-	$: console.log(whereTokens);
+	function showPropertySuggestions(tokenId: string) {
+		suggestions = dqlProperties.map((p) => p.propertyName).flat();
+		selectedToken = tokenId;
+	}
+
+	function showOperatorSuggestions(tokenId: string) {
+		suggestions = operators;
+		selectedToken = tokenId;
+	}
+
+	function showLogicalSuggestions(tokenId: string) {
+		suggestions = logicals;
+		selectedToken = tokenId;
+	}
+
+	function setCustomSuggestions(newSuggestions: string[]) {
+		suggestions = newSuggestions;
+	}
+
+	function updateTokenValue(tokenId: string, value: string) {
+		console.log(tokenId, value);
+
+		let token = whereTokens
+			.map((t) => t.tokens)
+			.flat()
+			.find((t) => t.id === tokenId);
+
+		if (token) {
+			token.value = value;
+			suggestions = [];
+			needsRerender = new Date();
+		}
+	}
 </script>
 
 <div>
 	<div class="field-row">
-		<span class="field-row-label">FROM</span>
-		<button class="field-row-button">measurements</button>
-		<span class="field-row-label">WHERE</span>
-		{#each whereTokens as token}
-			{#if token.type == 'logical'}
-				<button class="field-row-button">{token.tokens[0].value}</button>
-			{:else if token.type == 'form'}
-				<div class="field-row-form">
-					{#each token.tokens as subToken}
-						{#if subToken.type == 'property'}
-							<button class="field-row-button">{subToken.value}</button>
-						{:else if subToken.type == 'operator'}
-							<button class="field-row-button">{subToken.value}</button>
-						{:else if subToken.type == 'value'}
-							<button class="field-row-button">{subToken.value}</button>
-						{/if}
-					{/each}
-				</div>
-			{/if}
-		{/each}
-		<button class="field-row-button" on:click={addDefaultWhereTokens}>+</button>
-		<span class="field-row-field" />
+		<span class="bx--tile field-row-label">FROM</span>
+		<button class="bx--tile field-row-button">measurements</button>
+		<span class="bx--tile field-row-label">WHERE</span>
+		{#key needsRerender}
+			{#each whereTokens as token}
+				{#if token.type == 'logical'}
+					<div style:position="relative">
+						<button
+							class="bx--tile field-row-button"
+							on:click={() => showLogicalSuggestions(token.tokens[0].id)}
+							>{token.tokens[0].value}</button
+						>
+						<Popover open={selectedToken === token.tokens[0].id} align="bottom-left">
+							{#each suggestions as suggestion}
+								<div
+									class="popover-item"
+									role="button"
+									tabindex="0"
+									on:click={() => {
+										updateTokenValue(token.tokens[0].id, suggestion);
+										selectedToken = null;
+									}}
+									on:keydown={(e) => {
+										if (e.key === 'Enter') {
+											updateTokenValue(token.tokens[0].id, suggestion);
+											selectedToken = null;
+										}
+									}}
+								>
+									{suggestion}
+								</div>
+							{/each}
+						</Popover>
+					</div>
+				{:else if token.type == 'form'}
+					<div class="field-row-form">
+						{#each token.tokens as subToken}
+							{#if subToken.type == 'property'}
+								<div style:position="relative">
+									<button
+										class="bx--tile field-row-button"
+										on:click={() => showPropertySuggestions(subToken.id)}>{subToken.value}</button
+									>
+									<Popover open={selectedToken === subToken.id} align="bottom-left">
+										{#each suggestions as suggestion}
+											<div
+												class="popover-item"
+												role="button"
+												tabindex="0"
+												on:click={() => {
+													updateTokenValue(subToken.id, suggestion);
+													selectedToken = null;
+												}}
+												on:keydown={(e) => {
+													if (e.key === 'Enter') {
+														updateTokenValue(subToken.id, suggestion);
+														selectedToken = null;
+													}
+												}}
+											>
+												{suggestion}
+											</div>
+										{/each}
+									</Popover>
+								</div>
+							{:else if subToken.type == 'operator'}
+								<div style:position="relative">
+									<button
+										class="bx--tile field-row-button"
+										on:click={() => showOperatorSuggestions(subToken.id)}>{subToken.value}</button
+									>
+									<Popover open={selectedToken === subToken.id} align="bottom-left">
+										{#each suggestions as suggestion}
+											<div
+												class="popover-item"
+												role="button"
+												tabindex="0"
+												on:click={() => {
+													updateTokenValue(subToken.id, suggestion);
+													selectedToken = null;
+												}}
+												on:keydown={(e) => {
+													if (e.key === 'Enter') {
+														updateTokenValue(subToken.id, suggestion);
+														selectedToken = null;
+													}
+												}}
+											>
+												{suggestion}
+											</div>
+										{/each}
+									</Popover>
+								</div>
+							{:else if subToken.type == 'value'}
+								{#if selectedToken === subToken.id}
+									<div style:position="relative">
+										<input
+											class="bx--tile field-row-field"
+											type="text"
+											value={subToken.value}
+											on:input={(e) => {
+												selectedToken = subToken.id;
+												setCustomSuggestions([e.currentTarget.value]);
+											}}
+											on:keydown={(e) => {
+												if (e.key === 'Enter') {
+													updateTokenValue(subToken.id, e.currentTarget.value);
+													selectedToken = null;
+												}
+											}}
+										/>
+										<Popover open={selectedToken === subToken.id} align="bottom-left">
+											{#each suggestions as suggestion}
+												<div
+													class="popover-item"
+													role="button"
+													tabindex="0"
+													on:click={() => {
+														updateTokenValue(subToken.id, suggestion);
+														selectedToken = null;
+													}}
+													on:keydown={(e) => {
+														if (e.key === 'Enter') {
+															updateTokenValue(subToken.id, suggestion);
+															selectedToken = null;
+														}
+													}}
+												>
+													{suggestion}
+												</div>
+											{/each}
+										</Popover>
+									</div>
+								{:else}
+									<button
+										class="bx--tile field-row-button"
+										on:click={() => {
+											selectedToken = subToken.id;
+										}}>{subToken.value}</button
+									>
+								{/if}
+							{/if}
+						{/each}
+					</div>
+				{/if}
+			{/each}{/key}
+		<button class="bx--tile field-row-button" on:click={addDefaultWhereTokens}>+</button>
+		<span class="bx--tile field-row-field" />
 	</div>
+	<Button
+		iconDescription="Execute query"
+		icon={Play}
+		on:click={() => onExecuteQuery(whereTokens.map((t) => t.tokens).flat())}
+		size="field"
+	/>
 </div>
 
 <style>
@@ -101,15 +281,17 @@
 		border-radius: 2px;
 		border: medium;
 		margin-right: 4px;
+		min-height: auto;
+		min-width: auto;
 	}
 
 	.field-row-label {
-		color: rgb(110, 159, 255);
+		color: var(--cds-button-primary);
 		flex: 0;
 	}
 
 	.field-row-button {
-		color: rgb(204, 204, 220);
+		color: var(--cds-text-primary);
 		cursor: pointer;
 		width: auto;
 		flex: 0;
@@ -121,5 +303,13 @@
 		flex-direction: row;
 		position: relative;
 		text-align: left;
+	}
+
+	.popover-item {
+		padding: 6px 12px 6px 12px;
+	}
+
+	.popover-item:hover {
+		background-color: var(--cds-tag-hover-blue);
 	}
 </style>

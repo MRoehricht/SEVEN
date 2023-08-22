@@ -53,6 +53,7 @@ export const measurementTypeLabels: Record<MeasurementType, string> = {
 };
 
 export type DqlToken = {
+	id: string;
 	type: 'property' | 'operator' | 'logical' | 'value';
 	value: string;
 	index: number;
