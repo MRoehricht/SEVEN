@@ -10,4 +10,5 @@ export type PanelProps = {
 	measurementType: number;
 	refreshInterval: number;
 	gridItem: GridItemProps;
+	showCurrentValue: boolean;
 };

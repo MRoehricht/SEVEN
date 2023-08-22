@@ -6,11 +6,13 @@
 	import { env } from '$env/dynamic/public';
 	import { onDestroy, onMount } from 'svelte';
 	import { FlaggedEnum } from '$lib/utils/flagged-enum';
+	import CurrentMeasurementPanel from '$lib/components/CurrentMeasurementPanel.svelte';
 
 	export let title: string;
 	export let probeId: string;
 	export let refreshInterval: number;
 	export let measurementType: number;
+	export let showCurrentValue: boolean = false;
 	export let onEditClicked: (probeId: string) => void;
 
 	const flags = new FlaggedEnum(measurementTypeLabels);
@@ -129,22 +131,26 @@
 	}
 </script>
 
-<Tile class="dashboard-tile">
-	{#if isLoading}
-		<LineChart data={[]} options={getLineChartOptions(true)} />
-	{:else if fetchError !== ''}
-		<p>{fetchError}</p>
-	{:else}
-		<div class="flex">
-			<LineChart data={measurements} options={getLineChartOptions(false)} />
-			{#if refreshInterval > 0}
-				<span class="last-updated">
-					aktualisiert: {lastUpdated.toLocaleTimeString()}
-				</span>
-			{/if}
-		</div>
-	{/if}
-</Tile>
+{#if !showCurrentValue}
+	<Tile class="dashboard-tile">
+		{#if isLoading}
+			<LineChart data={[]} options={getLineChartOptions(true)} />
+		{:else if fetchError !== ''}
+			<p>{fetchError}</p>
+		{:else}
+			<div class="flex">
+				<LineChart data={measurements} options={getLineChartOptions(false)} />
+				{#if refreshInterval > 0}
+					<span class="last-updated">
+						aktualisiert: {lastUpdated.toLocaleTimeString()}
+					</span>
+				{/if}
+			</div>
+		{/if}
+	</Tile>
+{:else}
+	<CurrentMeasurementPanel {probeId} {measurementType} {title} {refreshInterval} {onEditClicked} />
+{/if}
 
 <style>
 	:global(.dashboard-tile) {

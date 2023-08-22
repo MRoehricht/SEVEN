@@ -23,10 +23,10 @@ public class MeasurementRepository : IMeasurementRepository
         return await _context.Measurements.Include(_ => _.Probe).AsNoTracking().ToListAsync();
     }
 
-    public async Task<Measurement?> GetLastMeasurement(Guid probeId)
+    public async Task<Measurement?> GetLastMeasurement(Guid probeId, MeasurementType measurementType)
     {
         var measurements = await GetMeasurements();
-        var measurement = measurements.Where(_ => _.ProbeId == probeId).MaxBy(_ => _.Time);
+        var measurement = measurements.Where(_ => _.ProbeId == probeId && _.MeasurementType == measurementType).MaxBy(_ => _.Time);
         return measurement;
     }
 

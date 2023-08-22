@@ -15,6 +15,7 @@ export type AddMeasurementPanel = {
 	probeId: string;
 	refreshInterval: number;
 	measurementType: number;
+	showCurrentValue: boolean;
 };
 
 export type Probe = {
@@ -35,7 +36,7 @@ export enum MeasurementType {
 	LightIntensity = 32,
 	SoilMoisture = 64,
 	SwitchingState = 128,
-	AirPressure = 256,
+	AirPressure = 256
 }
 
 export const measurementTypeLabels: Record<MeasurementType, string> = {

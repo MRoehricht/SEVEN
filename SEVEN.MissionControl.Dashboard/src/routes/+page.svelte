@@ -40,7 +40,8 @@
 						title: panel.title,
 						probeId: panel.probeId,
 						measurementType: panel.measurementType,
-						refreshInterval: panel.refreshInterval
+						refreshInterval: panel.refreshInterval,
+						showCurrentValue: panel.showCurrentValue
 					};
 				}
 				return p;
@@ -55,6 +56,7 @@
 							probeId: panel.probeId,
 							measurementType: panel.measurementType,
 							refreshInterval: panel.refreshInterval,
+							showCurrentValue: panel.showCurrentValue,
 							gridItem: { x: newPosition.x, y: newPosition.y, w, h, min: { w, h } }
 						}
 				  ]
@@ -122,7 +124,7 @@
 {#key needsUpdate || windowSizeChanged}
 	<div class="full-height">
 		<Grid cols={10} rows={0} {itemSize} readOnly={isLocked} bind:controller={gridController}>
-			{#each $panels as { id, title, probeId, refreshInterval, measurementType, gridItem } (id)}
+			{#each $panels as { id, title, probeId, refreshInterval, measurementType, gridItem, showCurrentValue } (id)}
 				<GridItem
 					{id}
 					bind:x={gridItem.x}
@@ -136,6 +138,7 @@
 						{probeId}
 						{refreshInterval}
 						{measurementType}
+						{showCurrentValue}
 						onEditClicked={() => {
 							const panel = $panels.find((p) => p.id === id);
 							if (panel) {
@@ -144,7 +147,8 @@
 									title: panel.title,
 									probeId: panel.probeId,
 									measurementType: panel.measurementType,
-									refreshInterval: panel.refreshInterval
+									refreshInterval: panel.refreshInterval,
+									showCurrentValue: panel.showCurrentValue
 								};
 								showAddPanelModal = true;
 							}

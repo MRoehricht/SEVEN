@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { measurementTypeLabels, type AddMeasurementPanel } from '$lib/types';
 	import { FlaggedEnum } from '$lib/utils/flagged-enum';
-	import { Modal, TextInput, Select, SelectItem } from 'carbon-components-svelte';
+	import { Modal, TextInput, Select, SelectItem, Checkbox } from 'carbon-components-svelte';
 
 	let title = '';
 	let probeId = '';
 	let refreshInterval = 0;
+	let showCurrentValue = false;
 
 	let measurementType = 0;
 	const flags = new FlaggedEnum(measurementTypeLabels);
@@ -28,6 +29,7 @@
 			probeId = selectedPanel.probeId;
 			refreshInterval = selectedPanel.refreshInterval;
 			measurementType = selectedPanel.measurementType;
+			showCurrentValue = selectedPanel.showCurrentValue;
 		}
 	}}
 	on:close={() => {
@@ -44,7 +46,8 @@
 			title,
 			probeId,
 			measurementType,
-			refreshInterval
+			refreshInterval,
+			showCurrentValue
 		});
 
 		isOpen = false;
@@ -67,4 +70,5 @@
 		placeholder="Refresh-Interval..."
 		bind:value={refreshInterval}
 	/>
+	<Checkbox bind:checked={showCurrentValue} labelText="nur aktuellen Wert darstellen?" />
 </Modal>
