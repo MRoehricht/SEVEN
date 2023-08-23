@@ -18,7 +18,7 @@ public class DqlQueryBuilder {
                 }
 
                 combinerGuid = Guid.NewGuid();
-                
+
                 groups.Add($"logical_{combinerGuid}", new List<DqlToken> {
                     token
                 });
@@ -38,42 +38,43 @@ public class DqlQueryBuilder {
     public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(Dictionary<string, List<DqlToken>> groups) {
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
 
-        Expression<Func<TEntity, bool>> finalExpression = null;
+        var propertyExpressions = new List<Expression>();
+        var logicalExpressions = new List<ExpressionType>();
 
         foreach (var group in groups) {
             if (group.Key.Contains("property")) {
                 var propertyExpression = BuildPropertyExpression<TEntity>(group.Value, parameter);
-
-                var logicalGroupKey = group.Key.Split("_")[1];
-                var logicalGroup = groups.TryGetValue($"logical_{logicalGroupKey}", out var logicalTokens)
-                    ? logicalTokens
-                    : new List<DqlToken>();
-
-                finalExpression = finalExpression == null
-                    ? propertyExpression
-                    : CombineExpressions(finalExpression, propertyExpression, logicalGroup);
+                propertyExpressions.Add(propertyExpression);
+            }
+            else if (group.Key.Contains("logical")) {
+                var logicalExpressionType = BuildLogicalOperatorExpression(group.Value[0].Value);
+                logicalExpressions.Add(logicalExpressionType);
             }
         }
 
-        return finalExpression;
+        return CombineExpressionsWithLogicalOperators<TEntity>(propertyExpressions, logicalExpressions, parameter);
     }
 
-    private Expression<Func<TEntity, bool>> CombineExpressions<TEntity>(Expression<Func<TEntity, bool>> left, Expression<Func<TEntity, bool>> right,
-        IReadOnlyList<DqlToken> logicalTokens) {
-        var logicalExpression = logicalTokens[0].Value;
-        var leftExpr = left.Body;
-        var rightExpr = right.Body;
+    private static Expression<Func<TEntity, bool>> CombineExpressionsWithLogicalOperators<TEntity>(IReadOnlyList<Expression> expressions,
+        IReadOnlyList<ExpressionType> operators, ParameterExpression parameter) {
+        if (expressions.Count == 0)
+            throw new ArgumentException("List of expressions is empty.");
 
-        var combinedExpression = logicalExpression switch {
-            "AND" => Expression.AndAlso(leftExpr, rightExpr),
-            "OR" => Expression.OrElse(leftExpr, rightExpr),
-            _ => throw new InvalidOperationException($"Logical operator {logicalExpression} is not supported.")
-        };
+        if (expressions.Count != operators.Count + 1)
+            throw new ArgumentException("Number of operators should be one less than the number of expressions.");
 
-        return Expression.Lambda<Func<TEntity, bool>>(combinedExpression, left.Parameters[0]);
+        var combinedExpression = expressions[0];
+
+        for (var i = 0; i < operators.Count; i++) {
+            combinedExpression = Expression.MakeBinary(operators[i], combinedExpression, expressions[i + 1]);
+        }
+
+        var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(combinedExpression, parameter);
+
+        return lambdaExpression;
     }
 
-    private Expression<Func<TEntity, bool>> BuildPropertyExpression<TEntity>(IReadOnlyList<DqlToken> group, ParameterExpression parameter) {
+    private Expression BuildPropertyExpression<TEntity>(IReadOnlyList<DqlToken> group, ParameterExpression parameter) {
         var propertyName = group[0].Value;
         var operatorToken = group[1].Value;
         var propertyValueString = group[2].Value;
@@ -89,7 +90,7 @@ public class DqlQueryBuilder {
         var propertyAccessExpr = Expression.PropertyOrField(parameter, propertyName);
         var operatorExpr = BuildOperatorExpression(propertyAccessExpr, operatorToken, propertyValue);
 
-        return Expression.Lambda<Func<TEntity, bool>>(operatorExpr, parameter);
+        return operatorExpr;
     }
 
     private static Expression BuildOperatorExpression(Expression propertyAccessExpr, string operatorToken, object propertyValue) {
@@ -101,6 +102,14 @@ public class DqlQueryBuilder {
             ">=" => Expression.GreaterThanOrEqual(propertyAccessExpr, Expression.Constant(propertyValue)),
             "<=" => Expression.LessThanOrEqual(propertyAccessExpr, Expression.Constant(propertyValue)),
             _ => throw new InvalidOperationException($"Operator {operatorToken} is not supported.")
+        };
+    }
+
+    private static ExpressionType BuildLogicalOperatorExpression(string operatorToken) {
+        return operatorToken switch {
+            "AND" => ExpressionType.AndAlso,
+            "OR" => ExpressionType.OrElse,
+            _ => throw new InvalidOperationException($"Logical operator {operatorToken} is not supported.")
         };
     }
 

@@ -54,7 +54,7 @@
 				tokens: [
 					{
 						id: uuidv4(),
-						type: 'operator',
+						type: 'logical',
 						value: 'AND',
 						index: 0
 					}

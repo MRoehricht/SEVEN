@@ -15,13 +15,19 @@ public static class DeviceEndpoint {
     private static async Task<IResult> ExecuteDql(List<DqlToken> tokens, MissionControlContext context) {
         var builder = new DqlQueryBuilder();
 
+        IQueryable<Measurement> measurementQuery;
+
         try {
-            var groups = DqlQueryBuilder.GroupTokens(tokens);
-            var predicate = builder.BuildExpression<Measurement>(groups);
+            if (!tokens.Any()) {
+                measurementQuery = context.Measurements;
+            }
+            else {
+                var groups = DqlQueryBuilder.GroupTokens(tokens);
+                var predicate = builder.BuildExpression<Measurement>(groups);
+                measurementQuery = context.Measurements.Where(predicate);
+            }
 
-            var query = context.Measurements.Where(predicate);
-            var result = query.ToList();
-
+            var result = measurementQuery.ToList();
             return Results.Ok(result);
         }
         catch (Exception ex) {
