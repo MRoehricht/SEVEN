@@ -40,7 +40,7 @@
 				{
 					id: uuidv4(),
 					type: 'value',
-					value: 'placeholder',
+					value: 'provide a value',
 					index: 0
 				}
 			]
@@ -252,6 +252,21 @@
 		<button class="bx--tile field-row-button" on:click={addDefaultWhereTokens}>+</button>
 		<span class="bx--tile field-row-field" />
 	</div>
+	<div class="field-row">
+		<span class="bx--tile field-row-label">SELECT</span>
+		<button class="bx--tile field-row-button">*</button>
+		<span class="bx--tile field-row-field" />
+	</div>
+	<div class="field-row">
+		<span class="bx--tile field-row-label">LIMIT</span>
+		<button class="bx--tile field-row-button">optional</button>
+		<span class="bx--tile field-row-field" />
+	</div>
+	<div class="field-row">
+		<span class="bx--tile field-row-label">ORDER BY</span>
+		<button class="bx--tile field-row-button">optional</button>
+		<span class="bx--tile field-row-field" />
+	</div>
 	<Button
 		iconDescription="Execute query"
 		icon={Play}
@@ -265,7 +280,9 @@
 		display: flex;
 		flex-flow: wrap;
 		align-content: flex-start;
+		column-gap: 4px;
 		row-gap: 8px;
+		margin-bottom: 8px;
 	}
 
 	.field-row-label,
@@ -275,7 +292,6 @@
 		align-items: center;
 		justify-content: space-between;
 		flex: 1;
-		flex-shrink: 0;
 		padding: 0.75rem;
 		background-color: white;
 		border-radius: 2px;
@@ -283,6 +299,7 @@
 		margin-right: 4px;
 		min-height: auto;
 		min-width: auto;
+		white-space: nowrap;
 	}
 
 	.field-row-label {
@@ -295,6 +312,10 @@
 		cursor: pointer;
 		width: auto;
 		flex: 0;
+	}
+
+	.field-row-button:hover {
+		background-color: var(--cds-tag-hover-blue);
 	}
 
 	.field-row-form {
