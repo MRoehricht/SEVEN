@@ -25,9 +25,17 @@
 		};
 
 		measurements = await fetch(`${env.PUBLIC_API_URL}/device/dql`, options)
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (res.status === 200) {
+					return await res.json();
+				} else {
+					fetchError = await res.text();
+					return [];
+				}
+			})
 			.catch((err) => {
 				fetchError = err.message;
+				return [];
 			});
 
 		isLoading = false;
@@ -44,7 +52,6 @@
 		dqlProperties = await fetch(`${env.PUBLIC_API_URL}/device/dql/properties`, options)
 			.then((res) => res.json())
 			.catch((err) => {
-				console.log(err);
 				fetchError = err.message;
 			});
 

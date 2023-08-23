@@ -67,7 +67,7 @@
 	}
 
 	function showPropertySuggestions(tokenId: string) {
-		suggestions = dqlProperties.map((p) => p.propertyName).flat();
+		suggestions = ['--remove--', ...dqlProperties.map((p) => p.propertyName).flat()];
 		selectedToken = tokenId;
 	}
 
@@ -86,17 +86,32 @@
 	}
 
 	function updateTokenValue(tokenId: string, value: string) {
-		console.log(tokenId, value);
+		if (value === '--remove--') {
+			let tokenGroupIndex = whereTokens.findIndex((t) => t.tokens.some((t) => t.id === tokenId));
 
-		let token = whereTokens
-			.map((t) => t.tokens)
-			.flat()
-			.find((t) => t.id === tokenId);
+			console.log(tokenId);
+			console.log(tokenGroupIndex);
 
-		if (token) {
-			token.value = value;
-			suggestions = [];
-			needsRerender = new Date();
+			if (tokenGroupIndex > -1) {
+				if (tokenGroupIndex === 0) {
+					whereTokens = whereTokens.slice(2);
+				} else {
+					whereTokens = whereTokens
+						.slice(0, tokenGroupIndex - 1)
+						.concat(whereTokens.slice(tokenGroupIndex + 1));
+				}
+			}
+		} else {
+			let token = whereTokens
+				.map((t) => t.tokens)
+				.flat()
+				.find((t) => t.id === tokenId);
+
+			if (token) {
+				token.value = value;
+				suggestions = [];
+				needsRerender = new Date();
+			}
 		}
 	}
 </script>
