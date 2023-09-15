@@ -39,7 +39,6 @@
 		SettingsAdjust,
 		Label
 	} from 'carbon-icons-svelte';
-
 	import { onMount } from 'svelte';
 	import '@carbon/styles/css/styles.css';
 	import '@carbon/charts-svelte/styles.css';
