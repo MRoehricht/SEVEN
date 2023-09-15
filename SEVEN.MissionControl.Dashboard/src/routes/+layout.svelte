@@ -56,7 +56,6 @@
 	let unsubscribe = page.subscribe((value) => {
 		path = value.route.id ?? '/';
 	});
-
 	let probes: Probe[] = [];
 	let isLoading = true;
 	onMount(() => {
