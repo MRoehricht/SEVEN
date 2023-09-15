@@ -4,7 +4,6 @@
 	import '@carbon/charts-svelte/styles.css';
 	import AddProbeModal from '$lib/components/AddProbeModal.svelte';
 	import type { Probe } from '$lib/types';
-	import { env } from '$env/dynamic/public';
 	import DashboardToolbar from '$lib/components/DashboardToolbar.svelte';
 	import {
 		DataTable,
@@ -18,6 +17,7 @@
 	import { Button, Modal } from 'carbon-components-svelte';
 	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
 	import { onMount } from 'svelte';
+	import { DeviceService } from '$lib/utils/deviceService';
 
 	let isLoading = true;
 	let fetchError = '';
@@ -34,34 +34,22 @@
 	];
 
 	onMount(() => {
-		fetchProbes();
+		fetchDevices();
 	});
 
-	async function fetchProbes() {
+	async function fetchDevices() {
 		isLoading = true;
-
-		const options: RequestInit = {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json', accept: '*/*' }
-		};
-		probes = await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
-
+		probes = await DeviceService.fetchDevices();
 		isLoading = false;
 	}
 
 	async function deleteProbe() {
 		if (selectedProbe == null || selectedProbe.id.length == 0) return;
 
-		const options: RequestInit = {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json', accept: '*/*' }
-		};
-
-		await fetch(`${env.PUBLIC_API_URL}/probe?id=` + selectedProbe.id, options);
+		await DeviceService.deleteDevice(selectedProbe.id);
 
 		showDeleteModal = false;
-
-		fetchProbes();
+		fetchDevices();
 	}
 
 	function setSelectedProbe(probe: DataTableRow) {
@@ -123,7 +111,7 @@
 	bind:selectedProbe
 	onSubmitClicked={() => {
 		selectedProbe = null;
-		fetchProbes();
+		fetchDevices();
 	}}
 />
 

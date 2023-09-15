@@ -399,3 +399,4 @@ FodyWeavers.xsd
 /SEVEN.Arduino/arduino_secrets.h
 SEVEN.Pico/Probe/secrets.py
 .idea/
+SEVEN.MissionControl.Dashboard/package-lock.json

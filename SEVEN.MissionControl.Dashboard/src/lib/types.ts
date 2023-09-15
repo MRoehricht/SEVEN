@@ -63,3 +63,11 @@ export type DqlProperty = {
 	propertyName: string;
 	propertyValues: string[];
 };
+
+export 	enum LoadingStatus {
+	dormant = 'dormant',
+	active = 'active',
+	finished = 'finished',
+	inactive = 'inactive',
+	error = 'error'
+}

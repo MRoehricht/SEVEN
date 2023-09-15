@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { measurementTypeLabels, type Probe } from '$lib/types';
 	import { Modal, TextInput, MultiSelect } from 'carbon-components-svelte';
-	import { env } from '$env/dynamic/public';
 	import { FlaggedEnum } from '$lib/utils/flagged-enum';
+	import { DeviceService } from '$lib/utils/deviceService';
 
 	export let isOpen: boolean;
 	export let onSubmitClicked: () => void;
@@ -19,28 +19,9 @@
 
 	async function createProbe(): Promise<Probe> {
 		if (selectedProbe == null || selectedProbe.id.length == 0) {
-			const options: RequestInit = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json', accept: '*/*' },
-				body: JSON.stringify({
-					name: name,
-					measurementsType: flags.getValueFromIds(selectedIds)
-				})
-			};
-
-			return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
+			return await DeviceService.createDevice(name, selectedIds);
 		} else {
-			const options: RequestInit = {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json', accept: '*/*' },
-				body: JSON.stringify({
-					id: selectedProbe.id,
-					name: name,
-					measurementsType: flags.getValueFromIds(selectedIds)
-				})
-			};
-
-			return await fetch(`${env.PUBLIC_API_URL}/probe`, options).then((res) => res.json());
+			return await DeviceService.updateDevice(selectedProbe.id, name, selectedIds);
 		}
 	}
 
