@@ -11,10 +11,8 @@
 	let speed: number = 0;
 	let socket: WebSocket;
 	onMount(() => {
-		socket = new WebSocket('ws://192.168.178.4:8745');
-		socket.addEventListener('open', () => {
-			console.log('Opened');
-		});
+		//socket = new WebSocket('ws://192.168.178.4:8745');
+		//socket.addEventListener('open', () => {			console.log('Opened');		});
 	});
 
 	onDestroy(() => {
