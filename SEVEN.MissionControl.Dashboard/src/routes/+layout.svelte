@@ -37,7 +37,8 @@
 		Explore,
 		LogoGithub,
 		SettingsAdjust,
-		Label
+		Label,
+		DroneVideo
 	} from 'carbon-icons-svelte';
 	import { onMount } from 'svelte';
 	import '@carbon/styles/css/styles.css';
@@ -172,6 +173,12 @@
 				text="Explore"
 				href="/devices/explore"
 				isSelected={path?.endsWith('/devices/explore')}
+			/>
+			<SideNavLink
+				icon={DroneVideo}
+				text="Rover"
+				href="/rovers"
+				isSelected={path?.endsWith('/rovers')}
 			/>
 		</SideNavItems>
 	{/if}
