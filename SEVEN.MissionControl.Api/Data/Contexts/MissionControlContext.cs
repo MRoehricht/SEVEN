@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SEVEN.Core.Models;
+using SEVEN.Core.Models.Files;
 
 namespace SEVEN.MissionControl.Api.Data.Contexts;
 
@@ -16,6 +17,8 @@ public class MissionControlContext : DbContext
     public DbSet<RoverTask> RoverTasks { get; set; }
     public DbSet<Probe> Probes { get; set; }
     public DbSet<Measurement> Measurements { get; set; }
+    
+    public DbSet<FileDetail> FileDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
