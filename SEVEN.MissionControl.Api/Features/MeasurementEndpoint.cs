@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using OpenIddict.Abstractions;
-using SEVEN.Core.Models;
+﻿using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Repositories.Interfaces;
 using SEVEN.MissionControl.Api.Services;
 using SEVEN.MissionControl.Api.Services.ChartServices;
@@ -17,6 +15,7 @@ public static class MeasurementEndpoint
         group.MapGet("/create/{message}", CreateMessages).WithName("CreateMessages").WithOpenApi();
         group.MapPost("/", PostMeasurement).WithName("PostMeasurement").WithOpenApi();
         group.MapDelete("/", DeleteMeasurement).WithName("DeleteMeasurement").WithOpenApi();
+        group.MapDelete("/multi/", DeleteMultiMeasurements).WithName("DeleteMultiMeasurements").WithOpenApi();
         return group;
     }
 
@@ -38,35 +37,36 @@ public static class MeasurementEndpoint
         if (filter == null) return Results.Ok(measurements);
 
         if (filter.ProbeId.HasValue)
-            measurements = measurements.Where(_ => _.ProbeId == filter.ProbeId.Value);
+            measurements = measurements.Where(m => m.ProbeId == filter.ProbeId.Value);
 
         if (filter.Year.HasValue)
-            measurements = measurements.Where(_ => DateOnly.FromDateTime(_.Time).Year == filter.Year.Value);
+            measurements = measurements.Where(m => DateOnly.FromDateTime(m.Time).Year == filter.Year.Value);
 
         if (filter.Month.HasValue)
-            measurements = measurements.Where(_ => DateOnly.FromDateTime(_.Time).Month == filter.Month.Value);
+            measurements = measurements.Where(m => DateOnly.FromDateTime(m.Time).Month == filter.Month.Value);
 
         if (filter.Day.HasValue)
-            measurements = measurements.Where(_ => DateOnly.FromDateTime(_.Time).Day == filter.Day.Value);
+            measurements = measurements.Where(m => DateOnly.FromDateTime(m.Time).Day == filter.Day.Value);
 
         if (filter.Type.HasValue)
-            measurements = measurements.Where(_ => _.MeasurementType == (filter.Type.Value));
+            measurements = measurements.Where(m => m.MeasurementType == (filter.Type.Value));
 
         if (filter.ReduceData.HasValue && filter.ReduceData.Value)
             measurements = ReduceDataService.ReduceData(measurements);
 
-        return Results.Ok(measurements.OrderBy(_ => _.Time));
+        return Results.Ok(measurements.OrderBy(m => m.Time));
     }
 
     private static async Task<IResult> CreateMessages(string? message, IMeasurementRepository repository)
     {
         var measurements = MeasurementMapperService.Map(message);
-        foreach (var measurement in measurements)
+        var enumerable = measurements as Measurement[] ?? measurements.ToArray();
+        foreach (var measurement in enumerable)
         {
             await repository.CreateMeasurement(measurement);
         }
 
-        return Results.Ok(measurements.Count());
+        return Results.Ok(enumerable.Length);
     }
 
     private static async Task<IResult> PostMeasurement(Measurement measurement, IMeasurementRepository repository)
@@ -78,6 +78,12 @@ public static class MeasurementEndpoint
     private static async Task<IResult> DeleteMeasurement(Guid id, IMeasurementRepository repository)
     {
         var isMeasurementDeleted = await repository.DeleteMeasurement(id);
+        return isMeasurementDeleted ? Results.NoContent() : Results.NotFound();
+    }
+    
+    private static async Task<IResult> DeleteMultiMeasurements(Guid id, IMeasurementRepository repository)
+    {
+        var isMeasurementDeleted = await repository.DeleteMultiMeasurements(id);
         return isMeasurementDeleted ? Results.NoContent() : Results.NotFound();
     }
     

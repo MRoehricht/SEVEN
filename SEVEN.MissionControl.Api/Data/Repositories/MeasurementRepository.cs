@@ -20,13 +20,13 @@ public class MeasurementRepository : IMeasurementRepository
 
     public async Task<IEnumerable<Measurement>> GetMeasurements()
     {
-        return await _context.Measurements.Include(_ => _.Probe).AsNoTracking().ToListAsync();
+        return await _context.Measurements.Include(m => m.Probe).AsNoTracking().ToListAsync();
     }
 
     public async Task<Measurement?> GetLastMeasurement(Guid probeId, MeasurementType measurementType)
     {
         var measurements = await GetMeasurements();
-        var measurement = measurements.Where(_ => _.ProbeId == probeId && _.MeasurementType == measurementType).MaxBy(_ => _.Time);
+        var measurement = measurements.Where(m => m.ProbeId == probeId && m.MeasurementType == measurementType).MaxBy(m => m.Time);
         return measurement;
     }
 
@@ -52,6 +52,20 @@ public class MeasurementRepository : IMeasurementRepository
         if (measurement is null) return false;
         
         _context.Measurements.Remove(measurement);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteMultiMeasurements(Guid probeId, MeasurementType? measurementType = null)
+    {
+        var probe = await _context.Probes.FindAsync(probeId);
+        if (probe is null) return false;
+
+       var measurements = measurementType.HasValue 
+            ? _context.Measurements.Where(m => m.ProbeId == probeId && m.MeasurementType == measurementType.Value) 
+            : _context.Measurements.Where(m => m.ProbeId == probeId);
+        
+        _context.Measurements.RemoveRange(measurements);
         await _context.SaveChangesAsync();
         return true;
     }
