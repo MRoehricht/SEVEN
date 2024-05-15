@@ -12,7 +12,7 @@ public static class DeviceEndpoint {
         return group;
     }
 
-    private static async Task<IResult> ExecuteDql(List<DqlToken> tokens, MissionControlContext context) {
+    private static Task<IResult> ExecuteDql(List<DqlToken> tokens, MissionControlContext context) {
         var builder = new DqlQueryBuilder();
 
         IQueryable<Measurement> measurementQuery;
@@ -28,14 +28,14 @@ public static class DeviceEndpoint {
             }
 
             var result = measurementQuery.ToList();
-            return Results.Ok(result);
+            return Task.FromResult(Results.Ok(result));
         }
         catch (Exception ex) {
-            return Results.BadRequest(ex.Message);
+            return Task.FromResult(Results.BadRequest(ex.Message));
         }
     }
 
-    private static async Task<IResult> GetMeasurementProperties() {
+    private static Task<IResult> GetMeasurementProperties() {
         var properties = typeof(Measurement).GetProperties().Select(p => p.Name).ToArray();
 
         var dqlProperties = properties.Select(property => new DqlProperties {
@@ -45,6 +45,6 @@ public static class DeviceEndpoint {
             })
             .ToList();
 
-        return Results.Ok(dqlProperties);
+        return Task.FromResult(Results.Ok(dqlProperties));
     }
 }
