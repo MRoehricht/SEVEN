@@ -22,8 +22,8 @@ public class RoverTaskRepository : IRoverTaskRepository
 
     public async Task<IEnumerable<RoverTask>> GetReadyRoverTasks(Guid roverId)
     {
-        var tasks = await _context.RoverTasks.Where(_ => _.RoverId == roverId && _.Status == RoverTaskStatus.Ready)
-            .OrderBy(_ => _.Position).ToListAsync();
+        var tasks = await _context.RoverTasks.Where(t => t.RoverId == roverId && t.Status == RoverTaskStatus.Ready)
+            .OrderBy(t => t.Position).ToListAsync();
         return tasks;
     }
 
@@ -45,7 +45,7 @@ public class RoverTaskRepository : IRoverTaskRepository
 
         if (rover == null) return null;
 
-        var positoin = await _context.RoverTasks.Where(_ => _.RoverId == rover.Id).MaxAsync(_ => _.Position);
+        var positoin = await _context.RoverTasks.Where(t => t.RoverId == rover.Id).MaxAsync(t => t.Position);
         roverTask.StatusUpdate = DateTime.Now;
         roverTask.Position = ++positoin;
         _context.RoverTasks.Add(roverTask);
@@ -61,7 +61,7 @@ public class RoverTaskRepository : IRoverTaskRepository
 
         roverTask.StatusUpdate = DateTime.Now;
         roverTask.Status = inputRoverTask.Status;
-        roverTask.StatusInfo = inputRoverTask?.StatusInfo;
+        roverTask.StatusInfo = inputRoverTask.StatusInfo;
 
         await _context.SaveChangesAsync();
 

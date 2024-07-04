@@ -86,5 +86,4 @@ public static class MeasurementEndpoint
         var isMeasurementDeleted = await repository.DeleteMultiMeasurements(id);
         return isMeasurementDeleted ? Results.NoContent() : Results.NotFound();
     }
-    
 }

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using SEVEN.Core.Models;
 using SEVEN.Core.Models.Configuration;
 
-namespace SEVEN.Core.API.Client;
+namespace SEVEN.MissionControl.API.Client;
 
 public class APIClient : IAPIClient
 {
@@ -13,7 +13,7 @@ public class APIClient : IAPIClient
 
     public APIClient(IOptions<APIConnection> options)
     {
-        if (options?.Value?.BaseUrl == null) throw new ArgumentNullException(nameof(APIConnection));
+        if (options.Value.BaseUrl == null) throw new ArgumentNullException(nameof(APIConnection));
 
         _baseUrl = options.Value.BaseUrl;
     }
@@ -26,13 +26,10 @@ public class APIClient : IAPIClient
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.GetAsync("/rover/" + roverId);
 
-        if (response != null)
-        {
-            var jsonString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Rover>(jsonString);
-        }
-
-        return null;
+        if (!response.IsSuccessStatusCode) return null;
+        
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Rover>(jsonString);
     }
 
     public async Task<RoverTask?> GetRoverTask(Guid taskId)
@@ -43,13 +40,10 @@ public class APIClient : IAPIClient
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.GetAsync("/tasks/" + taskId);
 
-        if (response != null)
-        {
-            var jsonString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<RoverTask>(jsonString);
-        }
-
-        return null;
+        if (!response.IsSuccessStatusCode) return null;
+        
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<RoverTask>(jsonString);
     }
 
     public async Task<IEnumerable<RoverTask>> GetReadyRoverTasks(Guid roverId)
@@ -60,13 +54,10 @@ public class APIClient : IAPIClient
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.GetAsync("/tasks/ready/" + roverId);
 
-        if (response != null)
-        {
-            var jsonString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<RoverTask>>(jsonString) ?? new List<RoverTask>();
-        }
-
-        return new List<RoverTask>();
+        if (!response.IsSuccessStatusCode) return new List<RoverTask>();
+        
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<IEnumerable<RoverTask>>(jsonString) ?? new List<RoverTask>();
     }
 
     public async Task CreateRoverTask(RoverTask roverTask)
@@ -85,7 +76,7 @@ public class APIClient : IAPIClient
 
         client.BaseAddress = new Uri(_baseUrl);
         var response = await client.PutAsJsonAsync("/tasks", roverTask);
-        response?.EnsureSuccessStatusCode();
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task<ProbeToken?> GetProbeToken(Guid probeId)

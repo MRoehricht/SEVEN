@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using SEVEN.Core.API.Client;
 using SEVEN.Core.Models;
 using SEVEN.Core.Models.Configuration;
+using SEVEN.MissionControl.API.Client;
 using SEVEN.Rover.Core.Clients;
 
 namespace SEVEN.Rover.Console;
@@ -12,7 +12,7 @@ internal class Program
     public static List<Option> _options = new();
     private static RoverClient? _roverClient;
 
-    private static async Task Main()
+    private static Task Main()
     {
         var builder = new ConfigurationBuilder();
         builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", false, true);
@@ -23,7 +23,7 @@ internal class Program
         if (string.IsNullOrWhiteSpace(roverConnection))
         {
             System.Console.WriteLine("RoverConnection ist nicht vergeben!");
-            return;
+            return Task.CompletedTask;
         }
 
         RoverConnection connection = new() { RoverUrl = roverConnection };
@@ -43,14 +43,14 @@ internal class Program
         {
             //new Option("Status", async() => WriteTemporaryMessage(RoverStatusNames.STATUS_HEADLIGHTS +":" + await _roverClient.GetHeadlights_Status())),
             //new Option("Systemcheck", () => WriteTemporaryMessage("Run SystemCheck")),
-            new("Headlights ON", async () => await _roverClient.TurnHeadlights_On()),
+            new("Headlights ON",  () =>  _ = _roverClient.TurnHeadlights_On()),
             //new Option("Headlights OFF", async() => await _roverClient.TurnHeadlights_Off()),
             //new Option("Take a picture", async() => WriteTemporaryMessage(await _roverClient.TakeFoto())),
             new("Load Rover from API",
-                async () => WriteRoverMessage(
+                async () => await WriteRoverMessage(
                     await apiClient.GetRover(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
             new("Load all ready RoverTask from API",
-                async () => WriteIEnumerableRoverTask(
+                async () => await WriteIEnumerableRoverTask(
                     await apiClient.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")))),
             new("API:COMMAND_HEADLIGHTS_ON", async () => await CreateTask(apiClient, true)),
             new("API:COMMAND_HEADLIGHTS_OFF", async () => await CreateTask(apiClient, false)),
@@ -96,6 +96,7 @@ internal class Program
         } while (keyinfo.Key != ConsoleKey.X);
 
         System.Console.ReadKey();
+        return Task.CompletedTask;
     }
 
     // Default action of all the _options. You can create more methods
@@ -107,14 +108,14 @@ internal class Program
         WriteMenu(_options, _options.First());
     }
 
-    private static void WriteRoverMessage(SEVEN.Core.Models.Rover? rover)
+    private static async Task WriteRoverMessage(SEVEN.Core.Models.Rover? rover)
     {
         System.Console.Clear();
 
         if (rover == null)
         {
             System.Console.WriteLine("Kein Rover da!");
-            Thread.Sleep(2000);
+            await Task.Delay(2000);
             return;
         }
 
@@ -128,11 +129,11 @@ internal class Program
             System.Console.WriteLine();
         }
 
-        Thread.Sleep(2000);
+        await Task.Delay(2000);
         WriteMenu(_options, _options.First());
     }
 
-    private static void WriteIEnumerableRoverTask(IEnumerable<RoverTask> roverTasks)
+    private static async Task WriteIEnumerableRoverTask(IEnumerable<RoverTask> roverTasks)
     {
         System.Console.Clear();
         foreach (var task in roverTasks)
@@ -143,7 +144,7 @@ internal class Program
             System.Console.WriteLine();
         }
 
-        Thread.Sleep(2000);
+        await Task.Delay(2000);
         WriteMenu(_options, _options.First());
     }
 
@@ -154,15 +155,23 @@ internal class Program
             Id = Guid.NewGuid(), RoverId = Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D"),
             Command = on ? RoverTaskCommands.CommandHeadlightsOn : RoverTaskCommands.CommandHeadlightsOff
         });
-        WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
+       await WriteIEnumerableRoverTask(await client.GetReadyRoverTasks(Guid.Parse("7A73F8AE-0000-0000-AAAA-7AB5A00A9C1D")));
     }
 
     private static async Task GetToken(APIClient client)
     {
         var token = await client.GetProbeToken(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
         System.Console.Clear();
-        System.Console.WriteLine(token.Type);
-        System.Console.WriteLine(token.Token);
+        if (token?.Type != null)
+        {
+            System.Console.WriteLine(token.Type);
+            System.Console.WriteLine(token.Token);
+        }
+        else
+        {
+            System.Console.WriteLine("Token nicht gefunden!");
+        }
+        
         System.Console.WriteLine();
         Thread.Sleep(2000);
         WriteMenu(_options, _options.First());
@@ -171,7 +180,11 @@ internal class Program
     private static async Task CreateMe(APIClient client)
     {
         var token = await client.GetProbeToken(Guid.Parse("7A73F8AE-0000-0000-BBBB-7AB5A00A9C1D"));
-
+        if(token == null)
+        {
+            System.Console.WriteLine("Token nicht gefunden!");
+            return;
+        }
         var measurement = await client.CreateMeasurement(
             new Measurement()
             {
@@ -180,8 +193,16 @@ internal class Program
             }, token);
         
         System.Console.Clear();
-        System.Console.WriteLine(measurement.Id);
-        System.Console.WriteLine(measurement.Time);
+        if (measurement?.Id != null)
+        {
+            System.Console.WriteLine(measurement.Id);
+            System.Console.WriteLine(measurement.Time);
+        }
+        else
+        {
+            System.Console.WriteLine("Messung nicht erstellt!");
+        }
+        
         System.Console.WriteLine();
         Thread.Sleep(2000);
         WriteMenu(_options, _options.First());
@@ -189,11 +210,11 @@ internal class Program
     
     
 
-    private static void WriteMenu(List<Option> _options, Option selectedOption)
+    private static void WriteMenu(List<Option> options, Option selectedOption)
     {
         System.Console.Clear();
         DrawHeader();
-        foreach (var option in _options)
+        foreach (var option in options)
         {
             if (option == selectedOption)
                 System.Console.Write("> ");

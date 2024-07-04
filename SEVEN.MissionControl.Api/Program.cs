@@ -1,7 +1,6 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SEVEN.MissionControl.Api.AuthenticationSchemes;
@@ -67,7 +66,7 @@ builder.Services.AddSwaggerGen(
             }
         });
 
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "SEVEN - WebApi REST Service", Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "unbekannt", Description = "Sandberg Electric Vehicle Eden Network API"});
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "SEVEN - WebApi REST Service", Version = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unbekannt", Description = "Sandberg Electric Vehicle Eden Network API"});
     });
 
 builder.Services.AddDbContext<MissionControlContext>(optionsAction => {
@@ -86,7 +85,7 @@ builder.Services.Configure<SEVENOptions>(builder.Configuration);
 builder.Services.AddTransient<IRoverTaskRepository, RoverTaskRepository>();
 builder.Services.AddTransient<IProbeRepository, ProbeRepository>();
 builder.Services.AddTransient<IMeasurementRepository, MeasurementRepository>();
-builder.Services.AddSingleton<EventPublisher>(new EventPublisher());
+builder.Services.AddSingleton(new EventPublisher());
 builder.Services.AddSingleton<ServerSendEventsService>(provider => new ServerSendEventsService(provider.GetService<EventPublisher>(), provider.GetService<ILogger<ServerSendEventsService>>()));
 //EventGenerator.Initialize(builder.Services);
 

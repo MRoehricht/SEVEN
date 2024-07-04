@@ -48,7 +48,7 @@ public class RoverDevelopmentClient : IRoverClient
     {
         RoverStatus ??= new RoverStatus { Id = "RoverDevelopmentClient" };
 
-        var item = RoverStatus.SwitchStatuses.FirstOrDefault(_ => _.Name == name);
+        var item = RoverStatus.SwitchStatuses.FirstOrDefault(s => s.Name == name);
 
         if (item == null)
             RoverStatus.SwitchStatuses.Add(new SwitchStatus { Name = name, Status = status });

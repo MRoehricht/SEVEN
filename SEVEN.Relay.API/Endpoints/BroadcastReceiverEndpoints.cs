@@ -15,8 +15,8 @@ public static class BroadcastReceiverEndpoints
     
     private static async Task<IResult> GetMessages(IBroadcastReceiverRepository repository)
     {
-        var probe = await repository.GetBroadcastMessages();
-        return probe != null ? Results.Ok(probe) : Results.NotFound();
+        var messages = await repository.GetBroadcastMessages();
+        return Results.Ok(messages);
     }
 
     private static async Task<IResult> CreateMessages(string? message, IBroadcastReceiverRepository repository)

@@ -15,6 +15,7 @@ public static class RoverClientServiceCollectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="isDevelopment"></param>
     /// <returns></returns>
     public static IServiceCollection AddRoverClient(
         this IServiceCollection services, IConfiguration configuration, bool isDevelopment)

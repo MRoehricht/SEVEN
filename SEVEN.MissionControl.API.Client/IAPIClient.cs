@@ -1,6 +1,6 @@
 ﻿using SEVEN.Core.Models;
 
-namespace SEVEN.Core.API.Client;
+namespace SEVEN.MissionControl.API.Client;
 
 public interface IAPIClient
 {

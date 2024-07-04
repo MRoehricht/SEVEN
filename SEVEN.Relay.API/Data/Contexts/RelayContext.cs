@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SEVEN.Core.Models;
 using SEVEN.Core.Models.Messages;
 
 namespace SEVEN.Relay.API.Data.Contexts;

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SEVEN.Core.Models;
+﻿using SEVEN.Core.Models;
 using SEVEN.MissionControl.Api.Data.Contexts;
 
 namespace SEVEN.MissionControl.Api.Data.Generators;

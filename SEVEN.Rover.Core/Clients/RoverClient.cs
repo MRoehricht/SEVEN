@@ -35,7 +35,7 @@ public class RoverClient : IRoverClient
     {
         await Call(RoverCommands.COMMAND_GET_STATUS);
         if (RoverStatus != null)
-            return RoverStatus.SwitchStatuses.FirstOrDefault(_ => _.Name == RoverStatusNames.STATUS_HEADLIGHTS)
+            return RoverStatus.SwitchStatuses.FirstOrDefault(s => s.Name == RoverStatusNames.STATUS_HEADLIGHTS)
                 ?.Status ?? false;
 
         return false;
@@ -57,7 +57,7 @@ public class RoverClient : IRoverClient
         client.BaseAddress = new Uri(_baseUri);
         var response = await client.GetAsync(command);
 
-        if (response != null)
+        if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
             RoverStatus = JsonConvert.DeserializeObject<RoverStatus>(jsonString);

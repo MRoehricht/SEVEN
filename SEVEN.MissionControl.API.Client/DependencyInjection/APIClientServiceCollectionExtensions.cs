@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using SEVEN.Core.API.Client;
 using SEVEN.Core.Models.Configuration;
 
 namespace SEVEN.MissionControl.API.Client.DependencyInjection;
