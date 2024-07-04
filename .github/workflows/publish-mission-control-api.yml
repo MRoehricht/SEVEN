@@ -6,7 +6,7 @@ on:
       - 'SEVEN.Core/**'
   workflow_dispatch:
 jobs:
-  docker:
+  Build-And-Publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
